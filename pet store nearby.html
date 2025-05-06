@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pet Shop/Vet Near Me</title>
+  <style>
+    #map {
+      height: 500px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <h1>Find Pet Shops and Vets Near Me</h1>
+  <button onclick="findNearby()">Find Nearby Pet Services</button>
+  <div id="map"></div>
+
+  <script>
+    let map;
+
+    function initMap() {
+      map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: -34.397, lng: 150.644 }, // Default center
+        zoom: 12,
+      });
+    }
+
+    function findNearby() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(async (position) => {
+          const userLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          map.setCenter(userLocation);
+
+          // Send location to backend
+          const response = await fetch('/api/nearby', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(userLocation)
+          });
+          const locations = await response.json();
+
+          // Add markers
+          locations.forEach(place => {
+            new google.maps.Marker({
+              position: { lat: place.lat, lng: place.lng },
+              map: map,
+              title: place.name
+            });
+          });
+        });
+      } else {
+        alert("Geolocation is not supported by your browser.");
+      }
+    }
+  </script>
+  <!-- Replace YOUR_API_KEY with an actual Google Maps API key -->
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
+</body>
+</html>
+const express = require('express');
+const fetch = require('node-fetch');
+const app = express();
+const PORT = 3000;
+
+// Middleware
+app.use(express.json());
+app.use(express.static('public')); // To serve frontend files
+
+// Endpoint to find nearby pet shops/vets
+app.post('/api/nearby', async (req, res) => {
+  const { lat, lng } = req.body;
+  const apiKey = 'YOUR_GOOGLE_PLACES_API_KEY';
+  const radius = 5000; // meters
+  const type = 'pet_store|veterinary_care';
+
+  const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=${radius}&type=${type}&key=${apiKey}`;
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    const results = data.results.map(place => ({
+      name: place.name,
+      lat: place.geometry.location.lat,
+      lng: place.geometry.location.lng
+    }));
+    res.json(results);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch nearby places' });
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
+});
+// Example structure for caching or saving user favorites
+{
+  userId: "12345",
+  favorites: [
+    {
+      name: "Happy Paws Pet Store",
+      lat: 3.1390,
+      lng: 101.6869,
+      address: "123 Pet Lane, Kuala Lumpur"
+    },
+    {
+      name: "Best Vet Clinic",
+      lat: 3.1400,
+      lng: 101.6890,
+      address: "456 Vet Street, Kuala Lumpur"
+    }
+  ]
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
