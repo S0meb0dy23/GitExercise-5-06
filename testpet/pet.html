@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PawPulse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom CSS for features Tailwind doesn't cover */
+        .pet-image-upload {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        .pet-image-upload input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        .medical-chart {
+            height: 250px;
+            position: relative;
+        }
+        .reminder-item {
+            transition: all 0.3s ease;
+        }
+        .reminder-item.dragging {
+            opacity: 0.5;
+            transform: scale(1.05);
+        }
+        .map-container {
+            height: 400px;
+            background-color: #e5e7eb;
+            position: relative;
+        }
+        .community-post {
+            transition: all 0.2s ease;
+        }
+        .community-post:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Header -->
+    <header class="bg-indigo-600 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-paw text-2xl"></i>
+                <h1 class="text-2xl font-bold">PetCare Companion</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="notification-btn" class="relative">
+                    <i class="fas fa-bell text-xl"></i>
+                    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                </button>
+                <div class="w-10 h-10 rounded-full bg-indigo-400 flex items-center justify-center">
+                    <span class="font-semibold">JP</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Navigation Tabs -->
+    <nav class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="container mx-auto px-4">
+            <div class="flex overflow-x-auto">
+                <button class="tab-btn py-4 px-6 font-medium text-gray-600 border-b-2 border-transparent hover:text-indigo-600 hover:border-indigo-300 whitespace-nowrap" data-tab="profile">
+                    <i class="fas fa-user mr-2"></i>Pet Profile
+                </button>
+                <button class="tab-btn py-4 px-6 font-medium text-gray-600 border-b-2 border-transparent hover:text-indigo-600 hover:border-indigo-300 whitespace-nowrap" data-tab="medical">
+                    <i class="fas fa-heartbeat mr-2"></i>Medical Info
+                </button>
+                <button class="tab-btn py-4 px-6 font-medium text-gray-600 border-b-2 border-transparent hover:text-indigo-600 hover:border-indigo-300 whitespace-nowrap" data-tab="reminders">
+                    <i class="fas fa-bell mr-2"></i>Reminders
+                </button>
+                <button class="tab-btn py-4 px-6 font-medium text-gray-600 border-b-2 border-transparent hover:text-indigo-600 hover:border-indigo-300 whitespace-nowrap" data-tab="locations">
+                    <i class="fas fa-map-marker-alt mr-2"></i>Near Me
+                </button>
+                <button class="tab-btn py-4 px-6 font-medium text-gray-600 border-b-2 border-transparent hover:text-indigo-600 hover:border-indigo-300 whitespace-nowrap" data-tab="community">
+                    <i class="fas fa-users mr-2"></i>Community
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-8">
+        <!-- Pet Profile Tab -->
+        <div id="profile" class="tab-content active">
+            <div class="flex flex-col md:flex-row gap-8">
+                <!-- Pet Profile Card -->
+                <div class="w-full md:w-1/3 bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex justify-center mb-6">
+                            <div class="pet-image-upload">
+                                <div class="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                                    <img id="pet-avatar" src="https://images.unsplash.com/photo-1586671267731-da2cf3ceeb80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80" alt="Pet" class="w-full h-full object-cover">
+                                </div>
+                                <input type="file" id="pet-avatar-input" accept="image/*" class="hidden">
+                                <button onclick="document.getElementById('pet-avatar-input').click()" class="absolute bottom-0 right-0 bg-indigo-600 text-white rounded-full p-2 shadow-md">
+                                    <i class="fas fa-camera"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center">
+                            <h2 class="text-xl font-bold" id="pet-name">Max</h2>
+                            <p class="text-gray-600" id="pet-breed">Golden Retriever</p>
+                            <div class="mt-4 flex justify-center space-x-4">
+                                <div>
+                                    <p class="text-gray-500 text-sm">Age</p>
+                                    <p class="font-semibold" id="pet-age">3 years</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-500 text-sm">Weight</p>
+                                    <p class="font-semibold" id="pet-weight">28 kg</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <button id="edit-profile-btn" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition">
+                                Edit Profile
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pet Details Form (Hidden by default) -->
+                <div id="pet-form" class="w-full md:w-2/3 bg-white rounded-xl shadow-md overflow-hidden hidden">
+                    <div class="p-6">
+                        <h2 class="text-xl font-bold mb-6">Edit Pet Profile</h2>
+                        
+                        <form id="pet-profile-form">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Pet Name</label>
+                                    <input type="text" id="name" name="name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" value="Max">
+                                </div>
+                                <div>
+                                    <label for="breed" class="block text-sm font-medium text-gray-700 mb-1">Breed</label>
+                                    <input type="text" id="breed" name="breed" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" value="Golden Retriever">
+                                </div>
+                                <div>
+                                    <label for="age" class="block text-sm font-medium text-gray-700 mb-1">Age</label>
+                                    <div class="flex">
+                                        <input type="number" id="age" name="age" class="w-full px-4 py-2 border border-gray-300 rounded-l-lg focus:ring-indigo-500 focus:border-indigo-500" value="3">
+                                        <select class="bg-gray-100 border border-l-0 border-gray-300 rounded-r-lg px-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                            <option>years</option>
+                                            <option>months</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="weight" class="block text-sm font-medium text-gray-700 mb-1">Weight (kg)</label>
+                                    <input type="number" id="weight" name="weight" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" value="28">
+                                </div>
+                                <div>
+                                    <label for="gender" class="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+                                    <select id="gender" name="gender" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                        <option>Male</option>
+                                        <option>Female</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="birthday" class="block text-sm font-medium text-gray-700 mb-1">Birthday</label>
+                                    <input type="date" id="birthday" name="birthday" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" value="2020-05-15">
+                                </div>
+                            </div>
+                            
+                            <div class="mt-6">
+                                <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">Additional Notes</label>
+                                <textarea id="notes" name="notes" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">Loves playing fetch and swimming. Allergic to chicken.</textarea>
+                            </div>
+                            
+                            <div class="mt-6 flex justify-end space-x-3">
+                                <button type="button" id="cancel-edit-btn" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                                    Cancel
+                                </button>
+                                <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                                    Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Pet Gallery (Visible when form is hidden) -->
+                <div id="pet-gallery" class="w-full md:w-2/3">
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-6">
+                                <h2 class="text-xl font-bold">Photo Gallery</h2>
+                                <button class="text-indigo-600 hover:text-indigo-800">
+                                    <i class="fas fa-plus mr-1"></i> Add Photos
+                                </button>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                <div class="aspect-square bg-gray-200 rounded-lg overflow-hidden">
+                                    <img src="https://images.unsplash.com/photo-1586671267731-da2cf3ceeb80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80" alt="Pet photo" class="w-full h-full object-cover">
+                                </div>
+                                <div class="aspect-square bg-gray-200 rounded-lg overflow-hidden">
+                                    <img src="https://images.unsplash.com/photo-1554692936-1604623702d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80" alt="Pet photo" class="w-full h-full object-cover">
+                                </div>
+                                <div class="aspect-square bg-gray-200 rounded-lg overflow-hidden">
+                                    <img src="https://images.unsplash.com/photo-1588943211346-0908a1fb2b01?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80" alt="Pet photo" class="w-full h-full object-cover">
+                                </div>
+                                <div class="aspect-square bg-gray-200 rounded-lg overflow-hidden">
+                                    <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80" alt="Pet photo" class="w-full h-full object-cover">
+                                </div>
+                                <div class="aspect-square bg-gray-200 rounded-lg overflow-hidden">
+                                    <img src="https://images.unsplash.com/photo-1588943211346-0908a1fb2b01?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80" alt="Pet photo" class="w-full h-full object-cover">
+                                </div>
+                                <div class="aspect-square bg-gray-200 rounded-lg flex items-center justify-center">
+                                    <button class="text-gray-500 hover:text-indigo-600">
+                                        <i class="fas fa-plus text-3xl"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Medical Info Tab -->
+        <div id="medical" class="tab-content">
+            <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold">Medical Records</h2>
+                        <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center">
+                            <i class="fas fa-plus mr-2"></i> Add Record
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <!-- Vaccination Card -->
+                        <div class="bg-blue-50 border border-blue-100 rounded-lg p-4">
+                            <div class="flex items-center mb-3">
+                                <div class="bg-blue-100 p-2 rounded-full mr-3">
+                                    <i class="fas fa-syringe text-blue-600"></i>
+                                </div>
+                                <h3 class="font-semibold">Vaccinations</h3>
+                            </div>
+                            <ul class="space-y-2">
+                                <li class="flex justify-between text-sm">
+                                    <span>Rabies</span>
+                                    <span class="text-gray-500">Due: 12/15/2023</span>
+                                </li>
+                                <li class="flex justify-between text-sm">
+                                    <span>Distemper</span>
+                                    <span class="text-green-600">Up to date</span>
+                                </li>
+                                <li class="flex justify-between text-sm">
+                                    <span>Bordetella</span>
+                                    <span class="text-green-600">Up to date</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Medications Card -->
+                        <div class="bg-purple-50 border border-purple-100 rounded-lg p-4">
+                            <div class="flex items-center mb-3">
+                                <div class="bg-purple-100 p-2 rounded-full mr-3">
+                                    <i class="fas fa-pills text-purple-600"></i>
+                                </div>
+                                <h3 class="font-semibold">Medications</h3>
+                            </div>
+                            <ul class="space-y-2">
+                                <li class="flex justify-between text-sm">
+                                    <span>Heartworm Preventative</span>
+                                    <span class="text-gray-500">Monthly</span>
+                                </li>
+                                <li class="flex justify-between text-sm">
+                                    <span>Flea & Tick Treatment</span>
+                                    <span class="text-gray-500">Next dose: 9/1/2023</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Conditions Card -->
+                        <div class="bg-amber-50 border border-amber-100 rounded-lg p-4">
+                            <div class="flex items-center mb-3">
+                                <div class="bg-amber-100 p-2 rounded-full mr-3">
+                                    <i class="fas fa-file-medical text-amber-600"></i>
+                                </div>
+                                <h3 class="font-semibold">Health Conditions</h3>
+                            </div>
+                            <ul class="space-y-2">
+                                <li class="text-sm">Food allergy (chicken)</li>
+                                <li class="text-sm">Mild hip dysplasia</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Weight Tracking Chart -->
+                    <div class="mb-8">
+                        <h3 class="font-semibold mb-4">Weight Tracking</h3>
+                        <div class="medical-chart">
+                            <canvas id="weightChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Vet Visits -->
+                    <div>
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-semibold">Recent Vet Visits</h3>
+                            <button class="text-indigo-600 hover:text-indigo-800 text-sm flex items-center">
+                                <i class="fas fa-history mr-1"></i> View All
+                            </button>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div>
+                                        <h4 class="font-medium">Annual Checkup</h4>
+                                        <p class="text-sm text-gray-500">Dr. Sarah Johnson - Happy Paws Vet Clinic</p>
+                                    </div>
+                                    <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">05/10/2023</span>
+                                </div>
+                                <p class="text-sm text-gray-700">Routine annual examination. All vaccinations up to date. Recommended dental cleaning in next 6 months.</p>
+                            </div>
+                            
+                            <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div>
+                                        <h4 class="font-medium">Skin Allergy Consultation</h4>
+                                        <p class="text-sm text-gray-500">Dr. Michael Chen - Happy Paws Vet Clinic</p>
+                                    </div>
+                                    <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">02/15/2023</span>
+                                </div>
+                                <p class="text-sm text-gray-700">Persistent itching and skin irritation. Diagnosed with chicken allergy. Prescribed hypoallergenic diet and medicated shampoo.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reminders Tab -->
+        <div id="reminders" class="tab-content">
+            <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold">Pet Care Reminders</h2>
+                        <button id="add-reminder-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center">
+                            <i class="fas fa-plus mr-2"></i> Add Reminder
+                        </button>
+                    </div>
+                    
+                    <!-- Reminder Categories -->
+                    <div class="flex overflow-x-auto pb-2 mb-6">
+                        <button class="reminder-category-btn px-4 py-2 mr-2 bg-indigo-600 text-white rounded-full text-sm whitespace-nowrap" data-category="all">All</button>
+                        <button class="reminder-category-btn px-4 py-2 mr-2 bg-gray-200 text-gray-700 rounded-full text-sm whitespace-nowrap" data-category="medication">Medication</button>
+                        <button class="reminder-category-btn px-4 py-2 mr-2 bg-gray-200 text-gray-700 rounded-full text-sm whitespace-nowrap" data-category="food">Food</button>
+                        <button class="reminder-category-btn px-4 py-2 mr-2 bg-gray-200 text-gray-700 rounded-full text-sm whitespace-nowrap" data-category="grooming">Grooming</button>
+                        <button class="reminder-category-btn px-4 py-2 mr-2 bg-gray-200 text-gray-700 rounded-full text-sm whitespace-nowrap" data-category="appointments">Appointments</button>
+                        <button class="reminder-category-btn px-4 py-2 mr-2 bg-gray-200 text-gray-700 rounded-full text-sm whitespace-nowrap" data-category="other">Other</button>
+                    </div>
+                    
+                    <!-- Reminders List -->
+                    <div id="reminders-list" class="space-y-3">
+                        <!-- Reminder items will be added here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Add Reminder Modal -->
+            <div id="reminder-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+                <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-bold">Add New Reminder</h3>
+                            <button id="close-reminder-modal" class="text-gray-500 hover:text-gray-700">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        
+                        <form id="reminder-form">
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="reminder-title" class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                                    <input type="text" id="reminder-title" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g. Give flea medication">
+                                </div>
+                                
+                                <div>
+                                    <label for="reminder-category" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                                    <select id="reminder-category" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                        <option value="medication">Medication</option>
+                                        <option value="food">Food</option>
+                                        <option value="grooming">Grooming</option>
+                                        <option value="appointments">Appointments</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="reminder-date" class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                                        <input type="date" id="reminder-date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                    </div>
+                                    <div>
+                                        <label for="reminder-time" class="block text-sm font-medium text-gray-700 mb-1">Time</label>
+                                        <input type="time" id="reminder-time" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="reminder-repeat" class="block text-sm font-medium text-gray-700 mb-1">Repeat</label>
+                                    <select id="reminder-repeat" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                        <option value="none">Does not repeat</option>
+                                        <option value="daily">Daily</option>
+                                        <option value="weekly">Weekly</option>
+                                        <option value="monthly">Monthly</option>
+                                        <option value="yearly">Yearly</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label for="reminder-notes" class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                                    <textarea id="reminder-notes" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" placeholder="Any additional details..."></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-6 flex justify-end space-x-3">
+                                <button type="button" id="cancel-reminder-btn" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                                    Cancel
+                                </button>
+                                <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                                    Save Reminder
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Locations Tab -->
+        <div id="locations" class="tab-content">
+            <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold">Pet Services Near You</h2>
+                        <div class="relative w-64">
+                            <input type="text" placeholder="Search locations..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="flex overflow-x-auto pb-2 mb-6">
+                        <button class="location-category-btn px-4 py-2 mr-2 bg-indigo-600 text-white rounded-full text-sm whitespace-nowrap" data-category="all">All</button>
+                        <button class="location-category-btn px-4 py-2 mr-2 bg-gray-200 text-gray-700 rounded-full text-sm whitespace-nowrap" data-category="vet">Veterinarians</button>
+                        <button class="location-category-btn px-4 py-2 mr-2 bg-gray-200 text-gray-700 rounded-full text-sm whitespace-nowrap" data-category="grooming">Grooming</button>
+                        <button class="location-category-btn px-4 py-2 mr-2 bg-gray-200 text-gray-700 rounded-full text-sm whitespace-nowrap" data-category="petstore">Pet Stores</button>
+                        <button class="location-category-btn px-4 py-2 mr-2 bg-gray-200 text-gray-700 rounded-full text-sm whitespace-nowrap" data-category="park">Parks</button>
+                    </div>
+                    
+                    <!-- Map Container -->
+                    <div class="map-container rounded-lg mb-6 flex items-center justify-center">
+                        <div class="text-center">
+                            <i class="fas fa-map-marked-alt text-4xl text-gray-400 mb-2"></i>
+                            <p class="text-gray-500">Map would display here with real integration</p>
+                            <p class="text-sm text-gray-400 mt-2">(Google Maps API integration required)</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Nearby Locations List -->
+                    <h3 class="font-semibold mb-4">Nearby Locations</h3>
+                    <div class="space-y-4">
+                        <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition flex items-start">
+                            <div class="bg-indigo-100 p-3 rounded-lg mr-4">
+                                <i class="fas fa-clinic-medical text-indigo-600"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start mb-1">
+                                    <h4 class="font-medium">Happy Paws Veterinary Clinic</h4>
+                                    <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">0.8 mi</span>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-2">123 Main St, Anytown • (555) 123-4567</p>
+                                <div class="flex items-center text-sm">
+                                    <div class="flex text-amber-400 mr-2">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star-half-alt"></i>
+                                    </div>
+                                    <span class="text-gray-500 mr-3">4.5 (128 reviews)</span>
+                                    <button class="text-indigo-600 hover:text-indigo-800 flex items-center">
+                                        <i class="fas fa-directions mr-1"></i> Directions
+                                    </button>
+                                </div>
+                            </div>
+                            <button class="text-gray-400 hover:text-indigo-600 ml-4">
+                                <i class="far fa-heart"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition flex items-start">
+                            <div class="bg-purple-100 p-3 rounded-lg mr-4">
+                                <i class="fas fa-paw text-purple-600"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start mb-1">
+                                    <h4 class="font-medium">Pampered Pets Grooming</h4>
+                                    <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">1.2 mi</span>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-2">456 Oak Ave, Anytown • (555) 987-6543</p>
+                                <div class="flex items-center text-sm">
+                                    <div class="flex text-amber-400 mr-2">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="far fa-star"></i>
+                                    </div>
+                                    <span class="text-gray-500 mr-3">4.0 (86 reviews)</span>
+                                    <button class="text-indigo-600 hover:text-indigo-800 flex items-center">
+                                        <i class="fas fa-directions mr-1"></i> Directions
+                                    </button>
+                                </div>
+                            </div>
+                            <button class="text-gray-400 hover:text-indigo-600 ml-4">
+                                <i class="far fa-heart"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition flex items-start">
+                            <div class="bg-blue-100 p-3 rounded-lg mr-4">
+                                <i class="fas fa-shopping-cart text-blue-600"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start mb-1">
+                                    <h4 class="font-medium">Pet Paradise Store</h4>
+                                    <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">1.5 mi</span>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-2">789 Elm St, Anytown • (555) 456-7890</p>
+                                <div class="flex items-center text-sm">
+                                    <div class="flex text-amber-400 mr-2">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <span class="text-gray-500 mr-3">5.0 (64 reviews)</span>
+                                    <button class="text-indigo-600 hover:text-indigo-800 flex items-center">
+                                        <i class="fas fa-directions mr-1"></i> Directions
+                                    </button>
+                                </div>
+                            </div>
+                            <button class="text-indigo-600 ml-4">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Community Tab -->
+        <div id="community" class="tab-content">
+            <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold">Pet Community</h2>
+                        <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center">
+                            <i class="fas fa-plus mr-2"></i> New Post
+                        </button>
+                    </div>
+                    
+                    <!-- Community Feed -->
+                    <div class="space-y-6">
+                        <!-- Post 1 -->
+                        <div class="community-post bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                            <div class="flex items-start mb-4">
+                                <div class="w-10 h-10 rounded-full bg-purple-200 flex items-center justify-center mr-3">
+                                    <span class="font-semibold text-purple-700">JD</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">Jane Doe</h4>
+                                    <p class="text-xs text-gray-500">2 hours ago • <span class="text-indigo-600">Golden Retriever Owner</span></p>
+                                </div>
+                            </div>
+                            
+                            <p class="mb-4">Does anyone have recommendations for good dog parks in the area? Looking for somewhere with shade and water access for hot days.</p>
+                            
+                            <div class="flex space-x-4 mb-4">
+                                <div class="aspect-square w-full max-w-xs bg-gray-200 rounded-lg overflow-hidden">
+                                    <img src="https://images.unsplash.com/photo-1586671267731-da2cf3ceeb80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80" alt="Post image" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-between text-sm text-gray-500 border-t border-b border-gray-100 py-3 mb-3">
+                                <div class="flex items-center space-x-4">
+                                    <button class="flex items-center hover:text-indigo-600">
+                                        <i class="far fa-heart mr-1"></i> 12
+                                    </button>
+                                    <button class="flex items-center hover:text-indigo-600">
+                                        <i class="far fa-comment mr-1"></i> 5
+                                    </button>
+                                </div>
+                                <button class="hover:text-indigo-600">
+                                    <i class="far fa-bookmark"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="w-8 h-8 rounded-full bg-blue-200 flex items-center justify-center mr-2">
+                                    <span class="text-xs font-semibold text-blue-700">JP</span>
+                                </div>
+                                <div class="flex-1">
+                                    <input type="text" placeholder="Write a comment..." class="w-full px-3 py-2 border border-gray-300 rounded-full text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Post 2 -->
+                        <div class="community-post bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                            <div class="flex items-start mb-4">
+                                <div class="w-10 h-10 rounded-full bg-green-200 flex items-center justify-center mr-3">
+                                    <span class="font-semibold text-green-700">AS</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">Alex Smith</h4>
+                                    <p class="text-xs text-gray-500">1 day ago • <span class="text-indigo-600">Cat Behavior Specialist</span></p>
+                                </div>
+                            </div>
+                            
+                            <p class="mb-4">Just adopted this sweet girl from the shelter last week! She's adjusting well but still a bit shy. Any tips for helping a rescue cat feel more at home?</p>
+                            
+                            <div class="grid grid-cols-2 gap-2 mb-4">
+                                <div class="aspect-square bg-gray-200 rounded-lg overflow-hidden">
+                                    <img src="https://images.unsplash.com/photo-1533738363-b7f9aef128ce?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80" alt="Post image" class="w-full h-full object-cover">
+                                </div>
+                                <div class="aspect-square bg-gray-200 rounded-lg overflow-hidden">
+                                    <img src="https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80" alt="Post image" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-between text-sm text-gray-500 border-t border-b border-gray-100 py-3 mb-3">
+                                <div class="flex items-center space-x-4">
+                                    <button class="flex items-center hover:text-indigo-600">
+                                        <i class="far fa-heart mr-1"></i> 28
+                                    </button>
+                                    <button class="flex items-center hover:text-indigo-600">
+                                        <i class="far fa-comment mr-1"></i> 14
+                                    </button>
+                                </div>
+                                <button class="hover:text-indigo-600">
+                                    <i class="far fa-bookmark"></i>
+                                </button>
+                            </div>
+                            
+                            <!-- Comments -->
+                            <div class="space-y-3 mb-3">
+                                <div class="flex items-start">
+                                    <div class="w-8 h-8 rounded-full bg-pink-200 flex items-center justify-center mr-2">
+                                        <span class="text-xs font-semibold text-pink-700">MJ</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium">Maria Johnson</p>
+                                        <p class="text-sm text-gray-600">Give her plenty of hiding spots and let her come to you on her own terms. It can take weeks or even months for some rescues to fully adjust.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <div class="w-8 h-8 rounded-full bg-yellow-200 flex items-center justify-center mr-2">
+                                        <span class="text-xs font-semibold text-yellow-700">TP</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium">Tom Parker</p>
+                                        <p class="text-sm text-gray-600">Feliway diffusers worked wonders for my anxious rescue!</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="w-8 h-8 rounded-full bg-blue-200 flex items-center justify-center mr-2">
+                                    <span class="text-xs font-semibold text-blue-700">JP</span>
+                                </div>
+                                <div class="flex-1">
+                                    <input type="text" placeholder="Write a comment..." class="w-full px-3 py-2 border border-gray-300 rounded-full text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-100 border-t border-gray-200 py-6">
+        <div class="container mx-auto px-4 text-center text-gray-600 text-sm">
+            <p>© 2023 PetCare Companion. All rights reserved.</p>
+            <div class="flex justify-center space-x-6 mt-4">
+                <a href="#" class="hover:text-indigo-600">Privacy Policy</a>
+                <a href="#" class="hover:text-indigo-600">Terms of Service</a>
+                <a href="#" class="hover:text-indigo-600">Contact Us</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Tab Navigation
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.getAttribute('data-tab');
+                
+                // Update active tab button
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('border-indigo-600', 'text-indigo-600');
+                    btn.classList.add('border-transparent', 'text-gray-600');
+                });
+                button.classList.add('border-indigo-600', 'text-indigo-600');
+                button.classList.remove('border-transparent', 'text-gray-600');
+                
+                // Show active tab content
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(tabId).classList.add('active');
+                
+                // Initialize specific tab features
+                if (tabId === 'medical') {
+                    initMedicalChart();
+                } else if (tabId === 'reminders') {
+                    initReminders();
+                }
+            });
+        });
+        
+        // Pet Profile Edit Toggle
+        const editProfileBtn = document.getElementById('edit-profile-btn');
+        const cancelEditBtn = document.getElementById('cancel-edit-btn');
+        const petForm = document.getElementById('pet-form');
+        const petGallery = document.getElementById('pet-gallery');
+        
+        editProfileBtn.addEventListener('click', () => {
+            petForm.classList.remove('hidden');
+            petGallery.classList.add('hidden');
+        });
+        
+        cancelEditBtn.addEventListener('click', () => {
+            petForm.classList.add('hidden');
+            petGallery.classList.remove('hidden');
+        });
+        
+        // Pet Avatar Upload
+        const petAvatarInput = document.getElementById('pet-avatar-input');
+        const petAvatar = document.getElementById('pet-avatar');
+        
+        petAvatarInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    petAvatar.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Medical Chart
+        function initMedicalChart() {
+            const ctx = document.getElementById('weightChart').getContext('2d');
+            const weightChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                    datasets: [{
+                        label: 'Weight (kg)',
+                        data: [26.5, 27.1, 27.3, 27.8, 28.0, 28.2, 28.1],
+                        borderColor: 'rgb(79, 70, 229)',
+                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                        tension: 0.3,
+                        fill: true,
+                        pointBackgroundColor: 'rgb(79, 70, 229)',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 25,
+                            max: 30,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Reminders System
+        function initReminders() {
+            const reminders = [
+                { id: 1, title: 'Give heartworm medication', category: 'medication', date: '2023-08-15', time: '08:00', repeat: 'monthly', notes: 'With food', completed: false },
+                { id: 2, title: 'Vet appointment', category: 'appointments', date: '2023-08-20', time: '14:30', repeat: 'none', notes: 'Annual checkup', completed: false },
+                { id: 3, title: 'Brush teeth', category: 'grooming', date: '2023-08-16', time: '19:00', repeat: 'weekly', notes: 'Use chicken-flavored toothpaste', completed: false },
+                { id: 4, title: 'Buy more dog food', category: 'food', date: '2023-08-18', time: '12:00', repeat: 'none', notes: 'Hypoallergenic salmon recipe', completed: false }
+            ];
+            
+            const remindersList = document.getElementById('reminders-list');
+            const addReminderBtn = document.getElementById('add-reminder-btn');
+            const reminderModal = document.getElementById('reminder-modal');
+            const closeReminderModal = document.getElementById('close-reminder-modal');
+            const cancelReminderBtn = document.getElementById('cancel-reminder-btn');
+            const reminderForm = document.getElementById('reminder-form');
+            const categoryButtons = document.querySelectorAll('.reminder-category-btn');
+            
+            // Render reminders
+            function renderReminders(filterCategory = 'all') {
+                remindersList.innerHTML = '';
+                
+                const filteredReminders = filterCategory === 'all' 
+                    ? reminders 
+                    : reminders.filter(r => r.category === filterCategory);
+                
+                filteredReminders.forEach(reminder => {
+                    const reminderItem = document.createElement('div');
+                    reminderItem.className = `reminder-item bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition flex items-start justify-between ${reminder.completed ? 'opacity-60' : ''}`;
+                    reminderItem.setAttribute('draggable', 'true');
+                    reminderItem.dataset.id = reminder.id;
+                    
+                    const iconClass = {
+                        medication: 'fas fa-pills text-blue-500',
+                        food: 'fas fa-utensils text-amber-500',
+                        grooming: 'fas fa-broom text-purple-500',
+                        appointments: 'fas fa-calendar-alt text-green-500',
+                        other: 'fas fa-tasks text-gray-500'
+                    }[reminder.category];
+                    
+                    reminderItem.innerHTML = `
+                        <div class="flex items-start">
+                            <div class="mr-3 mt-1">
+                                <i class="${iconClass}"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-medium ${reminder.completed ? 'line-through text-gray-500' : ''}">${reminder.title}</h3>
+                                <p class="text-sm text-gray-600">${formatReminderDate(reminder.date, reminder.time)}</p>
+                                ${reminder.notes ? `<p class="text-xs text-gray-500 mt-1">${reminder.notes}</p>` : ''}
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button class="complete-btn p-2 text-gray-400 hover:text-green-500">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="delete-btn p-2 text-gray-400 hover:text-red-500">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    
+                    remindersList.appendChild(reminderItem);
+                    
+                    // Add event listeners to buttons
+                    const completeBtn = reminderItem.querySelector('.complete-btn');
+                    const deleteBtn = reminderItem.querySelector('.delete-btn');
+                    
+                    completeBtn.addEventListener('click', () => {
+                        const reminderIndex = reminders.findIndex(r => r.id === reminder.id);
+                        reminders[reminderIndex].completed = !reminders[reminderIndex].completed;
+                        renderReminders(filterCategory);
+                    });
+                    
+                    deleteBtn.addEventListener('click', () => {
+                        const reminderIndex = reminders.findIndex(r => r.id === reminder.id);
+                        reminders.splice(reminderIndex, 1);
+                        renderReminders(filterCategory);
+                    });
+                });
+            }
+            
+            // Format date for display
+            function formatReminderDate(dateStr, timeStr) {
+                const date = new Date(dateStr);
+                const options = { weekday: 'short', month: 'short', day: 'numeric' };
+                return `${date.toLocaleDateString('en-US', options)} at ${timeStr}`;
+            }
+            
+            // Filter by category
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const category = button.dataset.category;
+                    
+                    // Update active category button
+                    categoryButtons.forEach(btn => {
+                        btn.classList.remove('bg-indigo-600', 'text-white');
+                        btn.classList.add('bg-gray-200', 'text-gray-700');
+                    });
+                    button.classList.add('bg-indigo-600', 'text-white');
+                    button.classList.remove('bg-gray-200', 'text-gray-700');
+                    
+                    renderReminders(category);
+                });
+            });
+            
+            // Add new reminder
+            addReminderBtn.addEventListener('click', () => {
+                // Set default date/time to tomorrow at 8am
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                const formattedDate = tomorrow.toISOString().split('T')[0];
+                
+                document.getElementById('reminder-date').value = formattedDate;
+                document.getElementById('reminder-time').value = '08:00';
+                reminderModal.classList.remove('hidden');
+            });
+            
+            // Close modal
+            closeReminderModal.addEventListener('click', () => {
+                reminderModal.classList.add('hidden');
+            });
+            
+            cancelReminderBtn.addEventListener('click', () => {
+                reminderModal.classList.add('hidden');
+            });
+            
+            // Handle form submission
+            reminderForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const newReminder = {
+                    id: Date.now(),
+                    title: document.getElementById('reminder-title').value,
+                    category: document.getElementById('reminder-category').value,
+                    date: document.getElementById('reminder-date').value,
+                    time: document.getElementById('reminder-time').value,
+                    repeat: document.getElementById('reminder-repeat').value,
+                    notes: document.getElementById('reminder-notes').value,
+                    completed: false
+                };
+                
+                reminders.unshift(newReminder);
+                renderReminders();
+                
+                // Reset form and close modal
+                reminderForm.reset();
+                reminderModal.classList.add('hidden');
+            });
+            
+            // Initialize with all reminders
+            renderReminders();
+            
+            // Drag and drop functionality
+            let draggedItem = null;
+            
+            remindersList.addEventListener('dragstart', (e) => {
+                if (e.target.classList.contains('reminder-item')) {
+                    draggedItem = e.target;
+                    e.target.classList.add('dragging');
+                    setTimeout(() => {
+                        e.target.style.display = 'none';
+                    }, 0);
+                }
+            });
+            
+            remindersList.addEventListener('dragend', (e) => {
+                if (e.target.classList.contains('reminder-item')) {
+                    e.target.classList.remove('dragging');
+                    e.target.style.display = 'flex';
+                }
+            });
+            
+            remindersList.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                const afterElement = getDragAfterElement(remindersList, e.clientY);
+                if (afterElement == null) {
+                    remindersList.appendChild(draggedItem);
+                } else {
+                    remindersList.insertBefore(draggedItem, afterElement);
+                }
+            });
+            
+            function getDragAfterElement(container, y) {
+                const draggableElements = [...container.querySelectorAll('.reminder-item:not(.dragging)')];
+                
+                return draggableElements.reduce((closest, child) => {
+                    const box = child.getBoundingClientRect();
+                    const offset = y - box.top - box.height / 2;
+                    if (offset < 0 && offset > closest.offset) {
+                        return { offset: offset, element: child };
+                    } else {
+                        return closest;
+                    }
+                }, { offset: Number.NEGATIVE_INFINITY }).element;
+            }
+        }
+        
+        // Location category filtering
+        const locationCategoryButtons = document.querySelectorAll('.location-category-btn');
+        
+        locationCategoryButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Update active category button
+                locationCategoryButtons.forEach(btn => {
+                    btn.classList.remove('bg-indigo-600', 'text-white');
+                    btn.classList.add('bg-gray-200', 'text-gray-700');
+                });
+                button.classList.add('bg-indigo-600', 'text-white');
+                button.classList.remove('bg-gray-200', 'text-gray-700');
+                
+                // In a real app, this would filter the locations
+            });
+        });
+        
+        // Initialize medical chart if on medical tab at load
+        if (document.getElementById('medical').classList.contains('active')) {
+            initMedicalChart();
+        }
+        
+        // Initialize reminders if on reminders tab at load
+        if (document.getElementById('reminders').classList.contains('active')) {
+            initReminders();
+        }
+    </script>
+</body>
+</html>
