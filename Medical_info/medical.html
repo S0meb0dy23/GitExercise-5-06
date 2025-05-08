@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Records</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="medical.css" />
+</head>
+<body>
+    <div id="medical" class="tab-content active">
+        <div class="container">
+            <div class="header">
+                <h2>Medical Records</h2>
+                <button id="addRecordBtn"><i class="fas fa-plus"></i> Add Record</button>
+            </div>
+
+            <!-- Record Cards -->
+            <div class="card-grid">
+                <div class="card vaccinations">
+                    <h3><i class="fas fa-syringe"></i> Vaccinations</h3>
+                    <ul id="vaccinationList"></ul>
+                </div>
+
+                <div class="card medications">
+                    <h3><i class="fas fa-pills"></i> Medications</h3>
+                    <ul id="medicationList"></ul>
+                </div>
+
+                <div class="card conditions">
+                    <h3><i class="fas fa-file-medical"></i> Health Conditions</h3>
+                    <ul id="conditionList"></ul>
+                </div>
+            </div>
+   
+
+            <!-- Chart -->
+            <div class="weight-section">
+                <h2>Weight Tracking</h2>
+                <canvas id="weightChart"></canvas>
+                <button id="showWeightFormBtn"><i class="fas fa-refresh"></i> Update Weight</button>
+            </div>
+            
+            <!--update weight-->
+            <div id="weightForm" class="update-weight-form hidden">
+                <input type="date" id="weightDate" />
+                <input type="number" id="weightValue" placeholder="Weight (kg)" />
+                <button id="addWeightBtn">Add Weight</button>
+            </div>
+              
+
+    <!-- Modal -->
+    <div id="recordModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <h3>Add Medical Record</h3>
+            <form id="recordForm">
+                <label>Type:</label>
+                <select name="type" required>
+                    <option value="vaccination">Vaccination</option>
+                    <option value="medication">Medication</option>
+                    <option value="condition">Condition</option>
+                </select>
+
+                <label>Description:</label>
+                <input type="text" name="description" required />
+
+                <label>Extra Info (optional):</label>
+                <input type="text" name="info" />
+
+                <button type="submit">Add</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="medical.js"></script>
+</body>
+</html>
