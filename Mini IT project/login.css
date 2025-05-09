@@ -96,7 +96,7 @@ body{
     font-size: 30px;
     font-weight: 600;
     cursor: pointer;
-    color: #333;
+    color: #4CAF50;
 }
 
 .Loginpage .register {
@@ -113,4 +113,16 @@ body{
 
 .retgister p a:hover {
     text-decoration: underline;
+}
+
+.register a {
+    text-decoration-color: #4CAF50;
+    color: #4CAF50;
+}
+
+.input-error {
+    color: red;
+    font-size: 20px;
+    margin-top: 5px;
+    margin-bottom: 10px;
 }
