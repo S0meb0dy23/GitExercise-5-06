@@ -1,3 +1,4 @@
+
 :root {
     --primary-clr: #b38add;
   }
@@ -556,3 +557,153 @@
   .credits a:hover {
     text-decoration: underline;
   }
+/* Add these to your existing CSS */
+
+/* Notification */
+.notification {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1000;
+}
+
+.notification.show {
+  opacity: 1;
+}
+
+/* Event types */
+.event-type {
+  margin-bottom: 10px;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+/* Event actions */
+.event-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 10px;
+}
+
+.event-actions i {
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.event-actions i:hover {
+  opacity: 1;
+}
+
+.edit-event {
+  color: #4ECDC4;
+}
+
+.delete-event {
+  color: #FF6B6B;
+}
+
+/* Event notes */
+.event-notes {
+  font-size: 0.8rem;
+  color: #ddd;
+  margin-top: 5px;
+  padding-top: 5px;
+  border-top: 1px dashed rgba(255,255,255,0.2);
+}
+
+/* Animation for calendar transitions */
+.calendar .days .day {
+  transition: all 0.3s ease;
+}
+
+/* Add event form improvements */
+.add-event-wrapper {
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.add-event-input {
+  transition: transform 0.2s ease;
+}
+
+.add-event-input:focus-within {
+  transform: scale(1.02);
+}
+
+/* Responsive improvements */
+@media screen and (max-width: 768px) {
+  .calendar .days .day {
+    height: 50px;
+    font-size: 0.9rem;
+  }
+  
+  .event-title {
+    font-size: 0.9rem;
+  }
+  
+  .event-time {
+    font-size: 0.7rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .calendar .month {
+    padding: 0 20px;
+  }
+  
+  .goto-today {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .goto-today .goto {
+    width: 100%;
+  }
+  
+  .today-btn {
+    width: 100%;
+  }
+}
+/* Improve click targets for event actions */
+.event-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 15px;
+}
+
+.event-actions i {
+  cursor: pointer;
+  opacity: 0.7;
+  transition: all 0.2s;
+  padding: 5px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.event-actions i:hover {
+  opacity: 1;
+  background: rgba(255,255,255,0.2);
+  transform: scale(1.1);
+}
+
+.edit-event {
+  color: #4ECDC4;
+}
+
+.delete-event {
+  color: #FF6B6B;
+}
