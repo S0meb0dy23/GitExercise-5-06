@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PawPulse - Login</title>
+    <link rel="stylesheet" href="login.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cute+Font&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+    <div class="Loginpage">
+        <form action="login.php" method="post">
+            <h1>Login</h1>
+            <div class="container">
+                <input type="text" placeholder="Username" name="username" id="username" required>
+                <i class="fa fa-user"></i>
+                
+              </div><div class="input-error" id="username-error"></div>
+              
+              <div class="container">
+                <input type="password" placeholder="Password" name="password" id="password" required>
+                <i class="fa fa-lock"></i>
+                
+              </div><div class="input-error" id="password-error"></div>
+
+            <div class="tickbox">
+                <label><input type="checkbox">Remember me</label>
+                <a href="forget.html">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn">Login</button>
+                    <div class="register">
+                        <p>Don't have an account? <a href="register.html">Register</a></p>
+                    </div>
+        </form> 
+    </div>  
+<script src="login.js"></script>  
+</body>
+</html>

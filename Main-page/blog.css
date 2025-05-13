@@ -1,0 +1,54 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Cute Font", sans-serif;
+}
+
+body {
+    background-color: #f0f0f0;
+}
+
+.container h1 {
+    text-align: center;
+    margin-bottom: 20px 0;
+    font-size: 100px;
+}
+
+.container p {
+    text-align: center;
+    margin-bottom: 20px 0;
+    font-size: 30px;
+}
+
+.container h2 {
+    text-align: center;
+    margin-top: 40px 0;
+    margin-bottom: 50px 0;
+    font-size: 55px;
+}
+
+.container ul {
+    text-align: center;
+    margin-bottom: 20px 0;
+    font-size: 35px;
+}  
+
+.container ul li {
+    list-style: none;
+    margin-bottom: 20px 0;
+}
+
+.container textarea {
+    display: block;
+    margin: 0 auto 40px auto;
+    margin-top: 30px;
+    text-align: center;
+    padding: 16px;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    outline: none;
+    font-weight: 500;
+    font-size: 30px;
+}
+
