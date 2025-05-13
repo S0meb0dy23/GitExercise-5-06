@@ -63,23 +63,20 @@
           </div>
           <div class="add-event-body">
             <div class="add-event-input">
-              <input type="text" placeholder="Event Name" class="event-name" />
+              <input type="text" placeholder="Event Name *" class="event-name" required />
             </div>
             <div class="add-event-input">
-              <input
-                type="text"
-                placeholder="Event Time From"
-                class="event-time-from"
-              />
+              <select class="event-type">
+             <!-- Options will be added by JavaScript -->
+                </select>
             </div>
             <div class="add-event-input">
-              <input
-                type="text"
-                placeholder="Event Time To"
-                class="event-time-to"
-              />
+                <input type="text" placeholder="Start Time (HH:MM) *" class="event-time-from" />
             </div>
-          </div>
+            <div class="add-event-input">
+                <input type="text" placeholder="End Time (HH:MM)" class="event-time-to" />
+                </div>
+            </div>
           <div class="add-event-footer">
             <button class="add-event-btn">Add Event</button>
           </div>
