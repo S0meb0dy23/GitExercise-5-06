@@ -2,13 +2,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const vaccinationList = document.getElementById('vaccinationList');
     const medicationList = document.getElementById('medicationList');
     const conditionList = document.getElementById('conditionList');
-    
 
     const addBtn = document.getElementById('addRecordBtn');
     const modal = document.getElementById('recordModal');
     const closeModal = document.getElementById('closeModal');
     const form = document.getElementById('recordForm');
-
 
     const weightForm = document.getElementById('weightForm');
     const showWeightFormBtn = document.getElementById('showWeightFormBtn');
@@ -20,7 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
         condition: []
     };
 
-    
+    // NEW: store weight data
+    let weightData = [];
+    let weightChart;
 
     // Show modal
     addBtn.addEventListener('click', () => {
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.classList.add('hidden');
     });
 
-    // Add record
+    // Add medical record
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         const type = form.type.value;
@@ -62,16 +62,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    
     function renderWeightChart() {
         const ctx = document.getElementById('weightChart').getContext('2d');
         weightChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: [], // Start empty
+                labels: [],
                 datasets: [{
                     label: 'Weight (kg)',
-                    data: [], // Start empty
+                    data: [],
                     borderColor: '#4f46e5',
                     backgroundColor: '#c7d2fe',
                     fill: true,
@@ -81,34 +80,68 @@ document.addEventListener('DOMContentLoaded', () => {
             options: {
                 responsive: true,
                 scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Date'
+                        }
+                    },
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Weight (kg)'
+                        }
                     }
                 }
             }
         });
     }
 
+    // NEW: updates chart with sorted weightData
+    function updateWeightChart() {
+        const formattedLabels = weightData.map(entry => {
+            const date = new Date(entry.date);
+            const options = { month: 'short', day: 'numeric' }; // e.g., "May 13"
+            return date.toLocaleDateString('en-US', options);
+        });
+
+        weightChart.data.labels = formattedLabels;
+        weightChart.data.datasets[0].data = weightData.map(entry => entry.weight);
+        weightChart.update();
+    }
+
     showWeightFormBtn.addEventListener('click', () => {
         weightForm.classList.toggle('hidden');
     });
-    
+
+    // UPDATED: Add weight, sort by date, and update chart
     addWeightBtn.addEventListener('click', () => {
-        const date = document.getElementById('weightDate').value;
-        const weight = parseFloat(document.getElementById('weightValue').value);
-    
-        if (date && !isNaN(weight)) {
-            weightChart.data.labels.push(date);
-            weightChart.data.datasets[0].data.push(weight);
-            weightChart.update();
-    
-            document.getElementById('weightDate').value = '';
-            document.getElementById('weightValue').value = '';
-            weightForm.classList.add('hidden'); // hide after submission
-        } else {
-            alert("Please enter a valid date and weight.");
-        }
-    });
+    const date = document.getElementById('weightDate').value;
+    const weight = parseFloat(document.getElementById('weightValue').value);
+
+    // Check if the date is already in the weightData
+    const dateExists = weightData.some(entry => entry.date === date);
+
+    if (dateExists) {
+        alert("You cannot enter the same date more than once.");
+    } else if (date && !isNaN(weight)) {
+        weightData.push({ date, weight });
+
+        // Sort data chronologically
+        weightData.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        // Update chart
+        updateWeightChart();
+
+        // Reset form
+        document.getElementById('weightDate').value = '';
+        document.getElementById('weightValue').value = '';
+        weightForm.classList.add('hidden');
+    } else {
+        alert("Please enter a valid date and weight.");
+    }
+});
 
     renderRecords();
     renderWeightChart();
