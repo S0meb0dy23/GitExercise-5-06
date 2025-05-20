@@ -1,4 +1,3 @@
-// Improved Pet Tracker Calendar Script
 const calendar = document.querySelector(".calendar"),
   date = document.querySelector(".date"),
   daysContainer = document.querySelector(".days"),
@@ -379,12 +378,15 @@ function updateEventInArray(updatedEvent) {
   }
 }
 
-// Event actions (edit/delete)
-eventsContainer.addEventListener("click", (e) => {
   // Handle delete icon click
-  if (e.target.classList.contains("delete-event") || 
-      e.target.parentElement.classList.contains("delete-event")) {
-    const eventElement = e.target.closest(".event");
+eventsContainer.addEventListener("click", (e) => {
+  const target = e.target;
+  
+  // Handle delete event
+  if (target.classList.contains("delete-event") || 
+      target.closest(".delete-event")) {
+    e.stopPropagation();
+    const eventElement = target.closest(".event");
     if (eventElement) {
       const eventId = eventElement.dataset.id;
       deleteEvent(eventId);
@@ -392,10 +394,11 @@ eventsContainer.addEventListener("click", (e) => {
     return;
   }
   
-  // Handle edit icon click
-  if (e.target.classList.contains("edit-event") || 
-      e.target.parentElement.classList.contains("edit-event")) {
-    const eventElement = e.target.closest(".event");
+  // Handle edit event
+  if (target.classList.contains("edit-event") || 
+      target.closest(".edit-event")) {
+    e.stopPropagation();
+    const eventElement = target.closest(".event");
     if (eventElement) {
       const eventId = eventElement.dataset.id;
       editEvent(eventId);
@@ -403,8 +406,8 @@ eventsContainer.addEventListener("click", (e) => {
     return;
   }
   
-  // Original event click handler (if you had one)
-  if (e.target.classList.contains("event")) {
+  // Original event click handler (if needed)
+  if (target.classList.contains("event")) {
     // Your existing event click logic here
   }
 });
