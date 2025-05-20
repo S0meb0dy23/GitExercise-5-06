@@ -1,4 +1,3 @@
-
 :root {
     --primary-clr: #b38add;
   }
@@ -706,4 +705,14 @@
 
 .delete-event {
   color: #FF6B6B;
+}
+
+.event-actions i {
+  pointer-events: auto; /* Ensure icons can receive clicks */
+  cursor: pointer;
+  padding: 5px; /* Larger click area */
+}
+
+.event {
+  pointer-events: auto; /* Ensure parent doesn't block clicks */
 }
