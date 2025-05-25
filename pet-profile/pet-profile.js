@@ -81,3 +81,43 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Tab Navigation Functionality
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Remove active class from all buttons
+            tabButtons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Add active class to clicked button
+            button.classList.add('active');
+            
+            // In a complete app, this would show the corresponding tab content
+            const tabId = button.getAttribute('data-tab');
+            console.log(`Switching to tab: ${tabId}`);
+            // You would typically have code here to show the corresponding content
+            // document.querySelectorAll('.tab-content').forEach(content => {
+            //     content.classList.remove('active');
+            // });
+            // document.getElementById(tabId).classList.add('active');
+        });
+    });
+
+    // Notification button functionality
+    const notificationBtn = document.getElementById('notification-btn');
+    if (notificationBtn) {
+        notificationBtn.addEventListener('click', () => {
+            console.log('Notification button clicked');
+            // This would typically open a notifications dropdown or panel
+        });
+    }
+
+    // For demonstration, set the first tab as active by default
+    if (tabButtons.length > 0) {
+        tabButtons[0].classList.add('active');
+    }
+});

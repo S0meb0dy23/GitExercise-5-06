@@ -24,3 +24,49 @@
     display: block;
     animation: fadeIn 0.5s;
 }
+/* Base Styles */
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+.tab-btn {
+    padding: 1rem 1.5rem;
+    font-weight: 500;
+    color: #4b5563; /* gray-600 */
+    border-bottom: 2px solid transparent;
+    background: none;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tab-btn:hover {
+    color: #4f46e5; /* indigo-600 */
+    border-bottom-color: #a5b4fc; /* indigo-300 */
+}
+
+.tab-btn.active {
+    color: #4f46e5; /* indigo-600 */
+    border-bottom-color: #4f46e5; /* indigo-600 */
+}
+
+.tab-icon {
+    font-size: 1rem;
+}
+
+.tab-text {
+    font-size: 0.875rem;
+}
+
+/* Hide scrollbar for tabs */
+.tabs-container::-webkit-scrollbar {
+    display: none;
+}
+.tabs-container {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
