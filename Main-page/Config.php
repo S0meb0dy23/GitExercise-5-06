@@ -2,7 +2,7 @@
 $host = "localhost";
 $db = "pawpulse";
 $user = "root";
-$pass = ""; // leave blank for XAMPP
+$pass = "";
 
 $conn = new mysqli($host, $user, $pass, $db);
 
