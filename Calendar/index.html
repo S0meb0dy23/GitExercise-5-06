@@ -71,16 +71,42 @@
             </div>
             <div class="add-event-input">
               <select class="event-type">
-             <!-- Options will be added by JavaScript -->
+                <!-- Options will be added by JavaScript -->
+              </select>
+            </div>
+            <div class="add-event-input">
+              <label>Start Time </label>
+              <div class="time-picker">
+                <select class="event-hour-from">
+                  <!-- Hours will be added by JavaScript -->
                 </select>
+                <span>:</span>
+                <select class="event-minute-from">
+                  <!-- Minutes will be added by JavaScript -->
+                </select>
+                <select class="event-am-pm-from">
+                  <option value="AM">AM</option>
+                  <option value="PM">PM</option>
+                </select>
+              </div>
             </div>
             <div class="add-event-input">
-                <input type="text" placeholder="Start Time (HH:MM) *" class="event-time-from" />
+              <label>End Time</label>
+              <div class="time-picker">
+                <select class="event-hour-to">
+                  <!-- Hours will be added by JavaScript -->
+                </select>
+                <span>:</span>
+                <select class="event-minute-to">
+                  <!-- Minutes will be added by JavaScript -->
+                </select>
+                <select class="event-am-pm-to">
+                  <option value="AM">AM</option>
+                  <option value="PM">PM</option>
+                </select>
+              </div>
             </div>
-            <div class="add-event-input">
-                <input type="text" placeholder="End Time (HH:MM)" class="event-time-to" />
-                </div>
-            </div>
+          </div>
           <div class="add-event-footer">
             <button class="add-event-btn">Add Event</button>
           </div>

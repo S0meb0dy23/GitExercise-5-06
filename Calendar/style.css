@@ -28,7 +28,6 @@
     justify-content: center;
     padding-bottom: 30px;
     background-color: #f9fafb;
-;
   }
   .container {
     position: relative;
@@ -562,20 +561,23 @@
 /* Notification */
 .notification {
   position: fixed;
-  bottom: 20px;
+  bottom: 30px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #333;
-  color: white;
+  background-color: #373c4f;
+  color: #fff;
   padding: 12px 24px;
-  border-radius: 4px;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
   opacity: 0;
-  transition: opacity 0.3s ease;
+  pointer-events: none;
+  transition: all 0.4s ease;
   z-index: 1000;
 }
 
 .notification.show {
   opacity: 1;
+  bottom: 50px;
 }
 
 /* Event types */
@@ -672,6 +674,16 @@
   .today-btn {
     width: 100%;
   }
+
+  /* Time picker mobile styles */
+  .time-picker {
+    flex-wrap: wrap;
+  }
+  
+  .time-picker select {
+    flex: 1;
+    min-width: 60px;
+  }
 }
 /* Improve click targets for event actions */
 .event-actions {
@@ -709,9 +721,9 @@
 }
 
 .event-actions i {
-  pointer-events: auto; /* Ensure icons can receive clicks */
+  pointer-events: auto;
   cursor: pointer;
-  padding: 5px; /* Larger click area */
+  padding: 5px;
 }
 
 .event {
