@@ -1,20 +1,24 @@
-/* Scoped styles to navbar only */
 .navbar-wrapper {
   font-family: 'Arial', sans-serif !important;
-  position: fixed !important; /* Changed from sticky to fixed for guaranteed top positioning */
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  width: 100% !important;
-  z-index: 9999 !important;
-  box-shadow: 0 4px 16px rgba(106, 86, 199, 0.1);
-  background-color: white;
+  position: fixed !important;
+  top: 0 ;
+  left: 0 ;
+  right: 0 ;
+  width: 100% ;
   height: 55px;
+  z-index: 9999 !important;
+  background-color: white;
+  box-shadow: 0 4px 16px rgba(106, 86, 199, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
 }
+
 
 /* Add padding to body to prevent content from hiding behind fixed navbar */
 body {
-  padding-top: [navbar-height]px !important; /* Replace [navbar-height] with your navbar's actual height */
+  padding-top: 55px !important; /* Replace [navbar-height] with your navbar's actual height */
   opacity: 0;
   transition: opacity 0.1s ease-in;
 }
@@ -28,18 +32,22 @@ body.fade-in {
   transition: all 0.3s ease !important;
   display: inline-flex !important;
   align-items: center !important;
+  padding: 1rem 1rem !important;
+  font-weight: 500 !important;
+  color: #4b5563 !important; /* default gray */
+  border-bottom: 2px solid transparent !important; /* reserve border space */
   text-decoration: none !important;
+  box-sizing: border-box; /* include border in width */
+  min-width: 100px; /* optional: fix min width to keep consistent */
+  justify-content: center; /* center icon/text */
 }
-
 .navbar-wrapper .tab-btn:hover {
-  color: #4f46e5 !important;
+  color: #4f46e5 !important; /* indigo */
   border-bottom-color: #a5b4fc !important;
 }
 
-.navbar-wrapper .tab-btn.active,
-.navbar-wrapper .tab-btn[href=""] {
+.navbar-wrapper .tab-btn.active {
   color: #4f46e5 !important;
-  border-bottom-color: #4f46e5 !important;
 }
 
 .navbar-wrapper .tab-btn i {
@@ -53,4 +61,13 @@ body.fade-in {
 .navbar-wrapper .flex {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+#pet-modal {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }
