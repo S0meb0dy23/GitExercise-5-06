@@ -30,25 +30,42 @@ body {
 
 .container ul {
     text-align: center;
+    padding: 0;
+    margin: 0 auto;
     margin-bottom: 20px 0;
-    font-size: 35px;
+    font-size: 50px;
+    list-style-type: none;
 }  
 
 .container ul li {
     list-style: none;
-    margin-bottom: 20px 0;
+    margin-bottom: 75px;
 }
 
-.container textarea {
-    display: block;
-    margin: 0 auto 40px auto;
-    margin-top: 30px;
-    text-align: center;
-    padding: 16px;
-    border-radius: 10px;
-    border: 2px solid transparent;
-    outline: none;
-    font-weight: 500;
-    font-size: 30px;
+.container ul li:last-child {
+    margin-bottom: 0;
 }
 
+.blog-title {
+  display: inline-block;
+  margin-bottom: 75px;
+}
+
+.container2 {
+  width: 100%;
+  height: 100%;
+  --size: 200px;
+  --color: #fefae0;
+
+  --l: var(--color) 20%, #0000 0;
+  --bg: 35%, #36763344 0 45%, var(--color) 0;
+  background: linear-gradient(
+      45deg,
+      var(--l) 45%,
+      var(--color) 0 70%,
+      #47d59f00 0
+    ),
+    linear-gradient(-45deg, var(--l) var(--bg) 70%, #0000 0),
+    linear-gradient(45deg, var(--color) var(--bg));
+  background-size: var(--size) var(--size);
+}
