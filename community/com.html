@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pet Community</title>
+  <link rel="stylesheet" href="com.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/navbar.css" />
+</head>
+<body>
+  <div id="navbar-container"></div>
+  <script src="/load-navbar.js"></script>
+  <main>
+    <section id="community" class="tab-content">
+      <div class="container">
+        <div class="header">
+          <h2>Pet Community</h2>
+          <button id="newPostBtn" aria-label="Add new post">
+            <i class="fas fa-plus"></i> New Post
+          </button>
+        </div>
+        <div id="postList" class="post-list"></div>
+      </div>
+    </section>
+  </main>
+  <div id="newPostModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-content">
+      <h3 id="modalTitle">Create New Post</h3>
+      <button class="close" aria-label="Close modal">&times;</button>
+      <form id="newPostForm">
+        <textarea id="postCaption" placeholder="Write your caption here..." rows="4" required></textarea>
+        <input type="file" id="postImages" accept="image/*" multiple aria-label="Upload images" />
+        <div id="image-preview-container" class="image-preview-container"></div>
+        <button type="submit" id="submitPostBtn">Post</button>
+      </form>
+    </div>
+  </div>
+  <script defer src="com.js"></script>
+</body>
+</html>

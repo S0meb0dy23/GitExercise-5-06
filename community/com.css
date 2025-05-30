@@ -1,0 +1,440 @@
+/* Basic page style matches your provided style */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f9fafb;
+  margin: 0;
+}
+
+.container {
+  border-radius: 10px;
+  padding: 5px 20px 40px 20px;
+  max-width: 900px;
+  margin: 70px auto 100px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+#newPostBtn {
+  background-color: #4f46e5;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+#newPostBtn:hover {
+  background-color: #3121be;
+}
+
+/* Posts List */
+.post-list {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* Single Post Card */
+.post {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  position: relative;
+}
+
+/* Post header */
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.post-author {
+  font-weight: 600;
+}
+
+.post-date {
+  margin-left: 10px;
+  color: #888;
+}
+
+/* 3-dot menu container */
+.menu-container {
+  position: relative;
+  cursor: pointer;
+}
+
+.menu-icon {
+  font-size: 1.2rem;
+  color: #666;
+  user-select: none;
+}
+
+.menu-dropdown {
+  position: absolute;
+  top: 25px;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border-radius: 6px;
+  display: none;
+  flex-direction: column;
+  z-index: 10;
+  width: 100px;
+}
+
+.menu-dropdown.show {
+  display: flex;
+}
+
+.menu-dropdown button {
+  background: none;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #444;
+  text-align: left;
+  width: 100%;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s;
+}
+
+.menu-dropdown button:last-child {
+  border-bottom: none;
+}
+
+.menu-dropdown button:hover {
+  background-color: #f0f0f0;
+}
+
+/* Post caption */
+.post-content {
+  font-size: 1rem;
+  color: #222;
+  margin-bottom: 12px;
+  white-space: pre-wrap;
+}
+
+/* Image slider - horizontal scroll */
+.image-slider {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+}
+
+.image-slider img {
+  border-radius: 10px;
+  max-height: 200px;
+  cursor: pointer;
+  user-select: none;
+  flex-shrink: 0;
+  max-width: 300px;
+  object-fit: cover;
+}
+
+/* Scrollbar styling for webkit */
+.image-slider::-webkit-scrollbar {
+  height: 8px;
+}
+
+.image-slider::-webkit-scrollbar-thumb {
+  background: #4f46e5;
+  border-radius: 4px;
+}
+
+.image-slider::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 4px;
+}
+
+/* Post actions (like/comment buttons) */
+.post-actions {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  font-size: 1rem;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.3s;
+  font-weight: 600;
+}
+
+.action-btn i {
+  font-size: 1.2rem;
+  transition: color 0.3s;
+}
+
+.like-btn.liked,
+.action-btn.like-btn:hover {
+  color: #4f46e5;
+}
+
+.like-btn.liked i {
+  color: #4f46e5;
+}
+
+/* Comments Section */
+.comments-section {
+  margin-top: 15px;
+  border-top: 1px solid #ddd;
+  padding-top: 12px;
+}
+
+.comments-list {
+  max-height: 150px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.comment {
+  margin-bottom: 8px;
+}
+
+.comment b {
+  font-weight: 600;
+}
+
+/* Comment input */
+.comment-input {
+  display: flex;
+  gap: 8px;
+}
+
+.comment-input input {
+  flex-grow: 1;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  outline-offset: 2px;
+  transition: border-color 0.2s;
+}
+
+.comment-input input:focus {
+  border-color: #4f46e5;
+}
+
+.comment-input button {
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.comment-input button:hover {
+  background-color: #3121be;
+}
+
+/* Hide elements with .hidden */
+.hidden {
+  display: none !important;
+}
+
+/* Modal styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px 25px 20px 25px;
+  border-radius: 8px;
+  width: 400px;
+  max-width: 90%;
+  position: relative;
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #222;
+}
+
+.modal-content .close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 26px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: #444;
+  font-weight: 700;
+}
+
+.modal-content textarea {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  resize: vertical;
+  padding: 12px;
+  font-size: 1rem;
+  font-family: inherit;
+  margin-bottom: 15px;
+  min-height: 80px;
+  outline-offset: 2px;
+  transition: border-color 0.2s;
+}
+
+.modal-content textarea:focus {
+  border-color: #4f46e5;
+}
+
+.modal-content input[type="file"] {
+  margin-bottom: 15px;
+}
+
+.modal-content button[type="submit"] {
+  background-color: #4f46e5;
+  color: white;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  width: 100%;
+  transition: background-color 0.3s ease;
+}
+
+.modal-content button[type="submit"]:hover {
+  background-color: #3121be;
+}
+
+#image-preview-container {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  overflow-x: auto;
+}
+
+#image-preview-container img.preview-image {
+  height: 80px;
+  border-radius: 8px;
+  object-fit: cover;
+  cursor: default;
+}
+
+/* Fix margin and padding specifically for caption textarea in Add Post modal */
+#newPostModal textarea#postCaption {
+  width: 100%;           /* Full width inside modal */
+  padding: 12px 14px;    /* Comfortable padding */
+  margin: 0 0 20px 0;    /* No top margin, 20px bottom margin */
+  box-sizing: border-box;/* Include padding and border in width */
+  border-radius: 8px;    /* Match modal textarea style */
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  resize: vertical;      /* Allow vertical resizing only */
+  font-family: inherit;
+  outline-offset: 2px;
+  transition: border-color 0.2s;
+}
+
+#newPostModal textarea#postCaption:focus {
+  border-color: #4f46e5;
+}
+
+/* Enhanced like button styles */
+.like-btn.liked {
+  color: #4f46e5;
+}
+
+.like-btn.liked i {
+  color: #4f46e5;
+}
+
+/* Edit modal styles */
+.edit-modal textarea {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  resize: vertical;
+  padding: 12px;
+  font-size: 1rem;
+  font-family: inherit;
+  margin-bottom: 15px;
+  min-height: 80px;
+  outline-offset: 2px;
+  transition: border-color 0.2s;
+}
+
+.edit-modal textarea:focus {
+  border-color: #4f46e5;
+}
+
+/* Image preview in edit modal */
+.edit-image-preview {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  overflow-x: auto;
+}
+
+.edit-image-preview img {
+  height: 80px;
+  border-radius: 8px;
+  object-fit: cover;
+  position: relative;
+}
+
+.edit-image-preview .remove-image {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #ff4444;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-preview-item {
+  position: relative;
+}
