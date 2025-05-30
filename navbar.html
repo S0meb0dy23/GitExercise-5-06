@@ -1,76 +1,29 @@
-<nav class="navbar-wrapper bg-white shadow-sm sticky top-0 z-50">
-  <div class="container mx-auto px-4">
-    <div class="flex overflow-x-auto">
-      <a href="/pet-profile/pet-profile.html" class="tab-btn py-4 px-6 font-medium text-gray-600 border-b-2 border-transparent hover:text-indigo-600 hover:border-indigo-300 whitespace-nowrap">
-        <i class="fas fa-user mr-2"></i>Pet Profile
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<nav class="navbar-wrapper">
+  <div>
+    <div>
+      <a href="/pet-profile/pet-profile.html" class="tab-btn">
+        <i class="fas fa-user"></i>Pet Profile
       </a>
-      <a href="/Medical_info/medical.html" class="tab-btn py-4 px-6 font-medium text-gray-600 border-b-2 border-transparent hover:text-indigo-600 hover:border-indigo-300 whitespace-nowrap">
-        <i class="fas fa-heartbeat mr-2"></i>Medical Info
+      <a href="/Medical_info/medical.html" class="tab-btn">
+        <i class="fas fa-heartbeat"></i>Medical Info
       </a>
-      <a href="/Calendar/index.html" class="tab-btn py-4 px-6 font-medium text-gray-600 border-b-2 border-transparent hover:text-indigo-600 hover:border-indigo-300 whitespace-nowrap">
-        <i class="fas fa-bell mr-2"></i>Reminders
+      <a href="/Calendar/index.html" class="tab-btn">
+        <i class="fas fa-bell"></i>Reminders
       </a>
-      <a href="/petstorenearby/petstorenearby.html" class="tab-btn py-4 px-6 font-medium text-gray-600 border-b-2 border-transparent hover:text-indigo-600 hover:border-indigo-300 whitespace-nowrap">
-        <i class="fas fa-map-marker-alt mr-2"></i>Near Me
+      <a href="/petstorenearby/petstorenearby.html" class="tab-btn">
+        <i class="fas fa-map-marker-alt"></i>Near Me
       </a>
-      <a href="community.html" class="tab-btn py-4 px-6 font-medium text-gray-600 border-b-2 border-transparent hover:text-indigo-600 hover:border-indigo-300 whitespace-nowrap">
-        <i class="fas fa-users mr-2"></i>Community
+      <a href="community.html" class="tab-btn">
+        <i class="fas fa-users"></i>Community
       </a>
     </div>
   </div>
 </nav>
 
-<style>
-/* Scoped styles to navbar only */
-.navbar-wrapper {
-  font-family: 'Arial', sans-serif !important;
-  position: sticky !important;
-  top: 0;
-  z-index: 9999 !important;
-  background-color: rgb(255, 255, 255);
-  box-shadow: 0 4px 16px rgba(106, 86, 199, 0.1);
-}
-
-/* Tab buttons scoped */
-.navbar-wrapper .tab-btn {
-  transition: all 0.3s ease !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  text-decoration: none !important;
-}
-
-.navbar-wrapper .tab-btn:hover {
-  color: #4f46e5 !important;
-  border-bottom-color: #a5b4fc !important;
-}
-
-.navbar-wrapper .tab-btn.active,
-.navbar-wrapper .tab-btn[href=""] {
-  color: #4f46e5 !important;
-  border-bottom-color: #4f46e5 !important;
-}
-
-.navbar-wrapper .tab-btn i {
-  margin-right: 0.5rem !important;
-}
-
-/* Optional: Hide scrollbars on small screens */
-.navbar-wrapper .flex::-webkit-scrollbar {
-  display: none;
-}
-.navbar-wrapper .flex {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-body {
-  opacity: 0;
-  transition: opacity 0.1s ease-in;
-}
-
-body.fade-in {
-  opacity: 1;
-}
-</style>
 
 <script>
   // Highlight current page in nav

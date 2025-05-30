@@ -33,28 +33,4 @@ function highlightCurrentPage() {
   });
 }
 
-// Smooth page transition between internal links
-function enablePageTransition() {
-  const links = document.querySelectorAll('a');
 
-  links.forEach(link => {
-    const href = link.getAttribute('href');
-    const isInternal = link.hostname === window.location.hostname && !href.includes('#');
-
-    if (isInternal) {
-      link.addEventListener('click', function (e) {
-        e.preventDefault();
-        const destination = this.href;
-
-        // Fade out
-        document.body.classList.remove('fade-in');
-        document.body.style.opacity = '0';
-
-        // Navigate after fade out
-        setTimeout(() => {
-          window.location.href = destination;
-        }, 300); // match transition time
-      });
-    }
-  });
-}

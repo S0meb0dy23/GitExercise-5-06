@@ -1,0 +1,56 @@
+/* Scoped styles to navbar only */
+.navbar-wrapper {
+  font-family: 'Arial', sans-serif !important;
+  position: fixed !important; /* Changed from sticky to fixed for guaranteed top positioning */
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  z-index: 9999 !important;
+  box-shadow: 0 4px 16px rgba(106, 86, 199, 0.1);
+  background-color: white;
+  height: 55px;
+}
+
+/* Add padding to body to prevent content from hiding behind fixed navbar */
+body {
+  padding-top: [navbar-height]px !important; /* Replace [navbar-height] with your navbar's actual height */
+  opacity: 0;
+  transition: opacity 0.1s ease-in;
+}
+
+body.fade-in {
+  opacity: 1;
+}
+
+/* Rest of your existing styles... */
+.navbar-wrapper .tab-btn {
+  transition: all 0.3s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  text-decoration: none !important;
+}
+
+.navbar-wrapper .tab-btn:hover {
+  color: #4f46e5 !important;
+  border-bottom-color: #a5b4fc !important;
+}
+
+.navbar-wrapper .tab-btn.active,
+.navbar-wrapper .tab-btn[href=""] {
+  color: #4f46e5 !important;
+  border-bottom-color: #4f46e5 !important;
+}
+
+.navbar-wrapper .tab-btn i {
+  margin-right: 0.5rem !important;
+}
+
+/* Optional: Hide scrollbars on small screens */
+.navbar-wrapper .flex::-webkit-scrollbar {
+  display: none;
+}
+.navbar-wrapper .flex {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
