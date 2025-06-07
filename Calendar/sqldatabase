@@ -1,0 +1,11 @@
+CREATE TABLE `events` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `title` VARCHAR(255) NOT NULL,
+  `type` VARCHAR(50) NOT NULL,
+  `time_from` VARCHAR(20) NOT NULL,
+  `time_to` VARCHAR(20) NOT NULL,
+  `day` INT NOT NULL,
+  `month` INT NOT NULL,
+  `year` INT NOT NULL,
+  PRIMARY KEY (`id`)
+);
