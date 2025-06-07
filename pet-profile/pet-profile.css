@@ -1,28 +1,11 @@
-
+/* Base Styles */
 body {
     padding-top: 60px;
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 }
 
-
-.pet-image-upload {
-    position: relative;
-    overflow: hidden;
-    display: inline-block;
-}
-
-.pet-image-upload input[type="file"] {
-    position: absolute;
-    left: 0;
-    top: 0;
-    opacity: 0;
-    width: 100%;
-    height: 100%;
-    cursor: pointer;
-}
-
-
+/* Form Animation */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -33,7 +16,7 @@ body {
     animation: fadeIn 0.3s;
 }
 
-
+/* 3-dot Menu Styles */
 #pet-switcher-btn {
     width: 32px;
     height: 32px;
@@ -82,7 +65,6 @@ body {
     font-weight: 500;
 }
 
-
 #gallery-grid img {
     height: 150px;
     object-fit: cover;
@@ -94,12 +76,29 @@ body {
     transform: scale(1.03);
 }
 
-
 #gallery-grid button {
     transition: opacity 0.2s ease;
 }
 
-
 .relative.group:hover button {
     opacity: 1 !important;
+}
+
+.fixed {
+    position: fixed;
+    z-index: 1000;
+}
+
+.notification {
+    animation: slideIn 0.3s forwards, fadeOut 0.5s forwards 4.5s;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
 }
