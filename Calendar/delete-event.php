@@ -1,18 +1,15 @@
 <?php
-header("Content-Type: application/json");
-
 include 'db.php';
 
-$data = json_decode(file_get_contents("php://input"), true);
-$id = intval($data["id"]);
+$id = $_POST['id'];
 
-$sql = "DELETE FROM events WHERE id = $id";
+$stmt = $mysqli->prepare("DELETE FROM events WHERE id = ?");
+$stmt->bind_param("i", $id);
 
-if ($conn->query($sql) === TRUE) {
-  echo json_encode(["status" => "success"]);
+if ($stmt->execute()) {
+    echo "Event deleted";
 } else {
-  echo json_encode(["status" => "error", "message" => $conn->error]);
+    echo "Error: " . $stmt->error;
 }
-
-$conn->close();
+$stmt->close();
 ?>

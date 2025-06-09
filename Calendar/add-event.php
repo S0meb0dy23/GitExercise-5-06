@@ -1,26 +1,21 @@
 <?php
-header("Content-Type: application/json");
-
 include 'db.php';
 
-$data = json_decode(file_get_contents("php://input"), true);
+$title = $_POST['title'];
+$type = $_POST['type'];
+$time_from = $_POST['time_from'];
+$time_to = $_POST['time_to'];
+$day = $_POST['day'];
+$month = $_POST['month'];
+$year = $_POST['year'];
 
-$title = $conn->real_escape_string($data["title"]);
-$type = $conn->real_escape_string($data["type"]);
-$time_from = $conn->real_escape_string($data["time_from"]);
-$time_to = $conn->real_escape_string($data["time_to"]);
-$day = intval($data["day"]);
-$month = intval($data["month"]);
-$year = intval($data["year"]);
+$stmt = $mysqli->prepare("INSERT INTO events (title, type, time_from, time_to, day, month, year) VALUES (?, ?, ?, ?, ?, ?, ?)");
+$stmt->bind_param("ssssiii", $title, $type, $time_from, $time_to, $day, $month, $year);
 
-$sql = "INSERT INTO events (title, type, time_from, time_to, day, month, year)
-        VALUES ('$title', '$type', '$time_from', '$time_to', $day, $month, $year)";
-
-if ($conn->query($sql) === TRUE) {
-  echo json_encode(["status" => "success", "id" => $conn->insert_id]);
+if ($stmt->execute()) {
+    echo "Event added";
 } else {
-  echo json_encode(["status" => "error", "message" => $conn->error]);
+    echo "Error: " . $stmt->error;
 }
-
-$conn->close();
+$stmt->close();
 ?>

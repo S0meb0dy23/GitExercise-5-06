@@ -281,17 +281,38 @@ function getDaySuffix(day) {
 
 // Update events display
 function updateEvents(date) {
+  console.log("Updating events for day:", date, "month:", month+1, "year:", year);
   const dayEvents = eventsArr.filter(
-    event => Number(event.day) === Number(date) && 
-             Number(event.month) === Number(month + 1) && 
-             Number(event.year) === Number(year)
+    event =>
+      Number(event.day) === date &&
+      Number(event.month) === month + 1 &&
+      Number(event.year) === year
   );
 
-  console.log("dayEvents for selected date:", dayEvents);
+  console.log("Matched events:", dayEvents);
 
-  eventsContainer.innerHTML = dayEvents.length > 0 
-    ? dayEvents[0].events.map(event => createEventElement(event)).join("")
-    : `<div class="no-event"><h3>No Events</h3></div>`;
+  if (dayEvents.length > 0) {
+    eventsContainer.innerHTML = dayEvents.map(event => {
+      const eventType = eventTypes.find(t => t.id === event.type) || eventTypes[eventTypes.length - 1];
+      return `
+        <div class="event" data-id="${event.id}" style="border-left: 4px solid ${eventType.color}">
+          <div class="title">
+            <i class="fas fa-circle" style="color: ${eventType.color}"></i>
+            <h3 class="event-title">${event.title}</h3>
+          </div>
+          <div class="event-time">
+            <span>${event.time_from} - ${event.time_to}</span>
+            <div class="event-actions">
+              <i class="fas fa-edit edit-event" title="Edit"></i>
+              <i class="fas fa-trash delete-event" title="Delete"></i>
+            </div>
+          </div>
+        </div>`;
+    }).join("");
+  } else {
+    eventsContainer.innerHTML = `<div class="no-event"><h3>No Events</h3></div>`;
+  }
+
   addEventActions();
 }
 
@@ -299,39 +320,37 @@ function addEventActions() {
   // Edit Event
   const editIcons = document.querySelectorAll(".edit-event");
   editIcons.forEach(icon => {
-    icon.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const eventId = Number(e.target.closest(".event").dataset.id);
-      const eventObj = eventsArr.find(
-        ev => ev.day === activeDay && ev.month === month + 1 && ev.year === year
-      );
-      if (!eventObj) return;
-      const event = eventObj.events.find(ev => ev.id === eventId);
-      if (!event) return;
+  icon.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const eventId = Number(e.target.closest(".event").dataset.id);
+    const event = eventsArr.find(ev => Number(ev.id) === eventId);
+  if (!event) return;
 
-      // Set editing ID globally
-      editingEventId = eventId;
+    // Set editing ID globally
+    editingEventId = eventId;
 
-      // Prefill form
-      addEventWrapper.classList.add("active");
-      addEventTitle.value = event.title;
-      eventTypeSelect.value = event.type;
+    // Prefill form
+    addEventWrapper.classList.add("active");
+    addEventTitle.value = event.title;
+    eventTypeSelect.value = event.type;
 
-      const [from, to] = event.time.split(" - ");
-      const [fromHour, fromMinuteAmPm] = from.split(":");
-      const [fromMinute, fromAmPm] = fromMinuteAmPm.split(" ");
-      const [toHour, toMinuteAmPm] = to.split(":");
-      const [toMinute, toAmPm] = toMinuteAmPm.split(" ");
+    const timeFrom = event.time_from;
+    const timeTo = event.time_to;
 
-      eventHourFrom.value = fromHour;
-      eventMinuteFrom.value = fromMinute;
-      eventAmPmFrom.value = fromAmPm;
+    const [fromHour, fromMinuteAmPm] = timeFrom.split(":");
+    const [fromMinute, fromAmPm] = fromMinuteAmPm.split(" ");
+    const [toHour, toMinuteAmPm] = timeTo.split(":");
+    const [toMinute, toAmPm] = toMinuteAmPm.split(" ");
 
-      eventHourTo.value = toHour;
-      eventMinuteTo.value = toMinute;
-      eventAmPmTo.value = toAmPm;
-    });
+    eventHourFrom.value = fromHour;
+    eventMinuteFrom.value = fromMinute;
+    eventAmPmFrom.value = fromAmPm;
+
+    eventHourTo.value = toHour;
+    eventMinuteTo.value = toMinute;
+    eventAmPmTo.value = toAmPm;
   });
+});
 
   // Delete Event
   const deleteIcons = document.querySelectorAll(".delete-event");
@@ -342,45 +361,23 @@ function addEventActions() {
       if (!confirmDelete) return;
 
       const eventId = Number(e.target.closest(".event").dataset.id);
-      const eventObj = eventsArr.find(
-        ev => ev.day === activeDay && ev.month === month + 1 && ev.year === year
-      );
-      if (!eventObj) return;
+      if (!eventsArr.find(ev => ev.id === eventId)) return;
 
-    // Delete Event Data Base  
-    fetch("delete-event.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: eventId })
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.status === "success") {
-        const eventObj = eventsArr.find(ev =>
-          ev.day === activeDay && ev.month === month + 1 && ev.year === year
-        );
-        if (!eventObj) return;
-        eventObj.events = eventObj.events.filter(ev => ev.id !== eventId);
-        if (eventObj.events.length === 0) {
-          eventsArr = eventsArr.filter(ev => !(ev.day === activeDay && ev.month === month + 1 && ev.year === year));
-        }
+      fetch('delete-event.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ id: eventId })
+      })
+      .then(response => response.text())
+      .then(data => {
+        console.log(data);
         showNotification("Event deleted");
         getEvents();
-      } else {
-        showNotification("Failed to delete event.");
-      }
-    });
-
-          const dayEl = document.querySelector(`.day[data-day="${activeDay}"]`);
-          const stillHasEvents = eventsArr.some(ev => ev.day === activeDay && ev.month === month + 1 && ev.year === year);
-          if (dayEl && !stillHasEvents) {
-            dayEl.classList.remove("event");
-          }
-
-          showNotification("Event deleted");
-        });
       });
-    }
+    });
+  });
+
+}
 
 // Create event HTML element
 function createEventElement(event) {
@@ -392,13 +389,12 @@ function createEventElement(event) {
         <h3 class="event-title">${event.title}</h3>
       </div>
       <div class="event-time">
-        <span>${event.time}</span>
+        <span>${event.time_from} - ${event.time_to}</span>
         <div class="event-actions">
           <i class="fas fa-edit edit-event" title="Edit"></i>
           <i class="fas fa-trash delete-event" title="Delete"></i>
         </div>
       </div>
-      ${event.notes ? `<div class="event-notes">${event.notes}</div>` : ''}
     </div>`;
 }
 
@@ -431,6 +427,7 @@ addEventTitle.addEventListener("input", (e) => {
 addEventSubmit.addEventListener("click", () => {
   const eventTitle = addEventTitle.value.trim();
   const eventType = eventTypeSelect.value;
+  
 
   if (!eventTitle || !eventType) {
     showNotification("Please fill all required fields");
@@ -445,11 +442,31 @@ addEventSubmit.addEventListener("click", () => {
   const endAmPm = eventAmPmTo.value;
   const timeFrom = `${startHour}:${startMinute} ${startAmPm}`;
   const timeTo = `${endHour}:${endMinute} ${endAmPm}`;
+  const eventTime = `${timeFrom} - ${timeTo}`;
 
-  fetch("add-event.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
+ if (editingEventId) {
+  // Update existing event
+  fetch('update-event.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      id: editingEventId,
+      title: eventTitle,
+      type: eventType,
+      time_from: timeFrom,
+      time_to: timeTo
+    })
+  })
+  .then(() => {
+      showNotification("Event updated");
+      getEvents(); // Refresh events after update
+    });
+} else {
+  // Add new event
+  fetch('add-event.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
       title: eventTitle,
       type: eventType,
       time_from: timeFrom,
@@ -459,27 +476,28 @@ addEventSubmit.addEventListener("click", () => {
       year: year
     })
   })
-  .then(response => response.json())
-  .then(data => {
-  if (data.status === "success") {
-    showNotification("Event Added");
-    addEventWrapper.classList.remove("active");
-    resetEventForm();
-    getEvents();
-    
-    setTimeout(() => {
-      const activeDayEl = document.querySelector(`.day[data-day="${activeDay}"]`);
-      if (activeDayEl) {
-        activeDayEl.click();
-      }
-    }, 100);
-    
-    } else {
-      showNotification("Failed to add event.");
-    }
-  });
-});
+  .then(() => {
+  showNotification("Event added/updated");
+  getEvents(); // This will refresh the events
 
+    setTimeout(() => {
+      const dayEl = document.querySelector(`.day[data-day="${activeDay}"]`);
+      if (dayEl) dayEl.click();
+    }, 100);
+  });
+}
+
+addEventWrapper.classList.remove("active");
+resetEventForm();
+editingEventId = null;
+
+
+  const dayEl = document.querySelector(`.day[data-day="${activeDay}"]`);
+  if (dayEl && !dayEl.classList.contains("event")) {
+    dayEl.classList.add("event");
+  }
+
+});
 
 // Reset event form function
 function resetEventForm() {
@@ -490,45 +508,17 @@ function resetEventForm() {
 
 // Get Event DB
 function getEvents() {
-  fetch("get-events.php")
+  fetch('get-events.php')
     .then(response => response.json())
     .then(data => {
-      eventsArr = convertEventsFromDB(data);
-      console.log("eventsArr after fetch:", eventsArr);
+      eventsArr = data;
       initCalendar();
+      // If we just loaded events — show today's events immediately
+      updateEvents(today.getDate());
     });
 }
 
-function convertEventsFromDB(data) {
-  let eventsByDay = [];
 
-  data.forEach(item => {
-    let dayEntry = eventsByDay.find(ev =>
-      ev.day === item.day && ev.month === item.month && ev.year === item.year
-    );
-
-    const eventData = {
-      id: Number(item.id),
-      title: item.title,
-      type: item.type,
-      time: `${item.time_from} - ${item.time_to}`,
-      notes: ""
-    };
-
-    if (dayEntry) {
-      dayEntry.events.push(eventData);
-    } else {
-      eventsByDay.push({
-        day: item.day,
-        month: item.month,
-        year: item.year,
-        events: [eventData]
-      });
-    }
-  });
-
-  return eventsByDay;
-}
 
 // Quick notification popup (basic example)
 function showNotification(message) {
