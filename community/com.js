@@ -8,13 +8,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const postImagesInput = document.getElementById('postImages');
   const imagePreviewContainer = document.getElementById('image-preview-container');
 
-  // In-memory posts store - now empty
+
   let posts = [];
 
-  // Utility to generate unique IDs
+
   const generateId = () => Date.now() + Math.random().toString(16).slice(2);
 
-  // Escape HTML helper (prevent XSS)
+
   function escapeHtml(text) {
     return text.replace(/[&<>"']/g, function (m) {
       return (
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Create image slider HTML (scrollable)
+
   function createImageSlider(images) {
     return `<div class="image-slider">
       ${images
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>`;
   }
 
-  // Create post DOM element
+ 
   function createPostElement(post) {
     const postEl = document.createElement('div');
     postEl.classList.add('post');
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return postEl;
   }
 
-  // Render all posts to the DOM
+
   function renderPosts() {
     postList.innerHTML = '';
     posts.forEach((post) => {
@@ -105,20 +105,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Open new post modal
   function openModal() {
     newPostModal.classList.remove('hidden');
     postCaptionInput.focus();
   }
 
-  // Close new post modal
+
   function closeModal() {
     newPostModal.classList.add('hidden');
     newPostForm.reset();
     imagePreviewContainer.innerHTML = '';  // Clear image previews when modal closes
   }
 
-  // Preview selected images before posting
+
   function previewSelectedImages(files, container) {
     container.innerHTML = ''; // Clear previous previews
     Array.from(files).slice(0, 5).forEach(file => {
@@ -135,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Create edit modal
+
   function createEditModal(post) {
     const modal = document.createElement('div');
     modal.className = 'modal edit-modal';
@@ -154,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     document.body.appendChild(modal);
     
-    // Show existing images
+
     const previewContainer = modal.querySelector('.edit-image-preview');
     post.images.forEach((imgSrc, index) => {
       const imgContainer = document.createElement('div');
@@ -166,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
       previewContainer.appendChild(imgContainer);
     });
     
-    // Handle image removal
+
     previewContainer.addEventListener('click', (e) => {
       if (e.target.classList.contains('remove-image')) {
         const index = parseInt(e.target.dataset.index);
@@ -176,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
     
-    // Preview new images
+
     const editImagesInput = modal.querySelector('.edit-post-images');
     editImagesInput.addEventListener('change', (e) => {
       const files = Array.from(e.target.files);
@@ -198,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
     
-    // Handle form submission
+
     const editForm = modal.querySelector('.edit-post-form');
     editForm.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -208,18 +207,18 @@ document.addEventListener('DOMContentLoaded', () => {
       modal.remove();
     });
     
-    // Close modal
+   
     const closeBtn = modal.querySelector('.close');
     closeBtn.addEventListener('click', () => modal.remove());
     
-    // Close on click outside
+   
     modal.addEventListener('click', (e) => {
       if (e.target === modal) {
         modal.remove();
       }
     });
     
-    // Close on ESC
+
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && document.querySelector('.edit-modal')) {
         document.querySelector('.edit-modal').remove();
@@ -229,12 +228,12 @@ document.addEventListener('DOMContentLoaded', () => {
     return modal;
   }
 
-  // When user selects files, show preview
+ 
   postImagesInput.addEventListener('change', (e) => {
     previewSelectedImages(e.target.files, imagePreviewContainer);
   });
 
-  // Add new post
+
   newPostForm.addEventListener('submit', (e) => {
     e.preventDefault();
 
@@ -247,7 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Read images as data URLs
+    
     const readFilesPromises = files.slice(0, 5).map(
       (file) =>
         new Promise((resolve) => {
@@ -275,7 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Handle like, comment toggle, add comment, edit/delete menu
+  
   postList.addEventListener('click', (e) => {
     const postEl = e.target.closest('.post');
     if (!postEl) return;
@@ -284,12 +283,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const post = posts.find((p) => p.id === postId);
     if (!post) return;
 
-    // Like button toggle (like/unlike)
+    
     if (e.target.closest('.like-btn')) {
       post.liked = !post.liked;
       post.likes += post.liked ? 1 : -1;
       
-      // Update the button immediately for better UX
+ 
       const likeBtn = postEl.querySelector('.like-btn');
       const likeIcon = likeBtn.querySelector('i');
       const likeCount = likeBtn.querySelector('.like-count');
@@ -298,7 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
       likeBtn.setAttribute('aria-pressed', post.liked);
       likeCount.textContent = post.likes;
       
-      // Toggle icon color
+  
       if (post.liked) {
         likeIcon.style.color = '#4f46e5';
       } else {
@@ -307,7 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Comment toggle button
+
     if (e.target.closest('.comment-toggle-btn')) {
       const commentsSection = postEl.querySelector('.comments-section');
       if (!commentsSection) return;
@@ -315,7 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // 3-dot menu toggle
+    
     if (e.target.closest('.menu-icon')) {
       const menuContainer = e.target.closest('.menu-container');
       const dropdown = menuContainer.querySelector('.menu-dropdown');
@@ -327,14 +326,14 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Edit post
+   
     if (e.target.classList.contains('edit-btn')) {
       closeAllMenus();
       createEditModal(post);
       return;
     }
 
-    // Delete post
+
     if (e.target.classList.contains('delete-btn')) {
       if (confirm('Are you sure you want to delete this post?')) {
         posts = posts.filter((p) => p.id !== postId);
@@ -345,7 +344,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Close 3-dot menus if clicked outside
+ 
   document.addEventListener('click', (e) => {
     if (
       !e.target.closest('.menu-container') &&
@@ -367,7 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Handle adding comments
+
   postList.addEventListener('submit', (e) => {
     if (!e.target.classList.contains('comment-input')) return;
     e.preventDefault();
@@ -390,20 +389,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     renderPosts();
-    input.value = ''; // Clear input after submission
+    input.value = ''; 
   });
 
-  // Open modal button
+
   newPostBtn.addEventListener('click', openModal);
   closeModalBtn.addEventListener('click', closeModal);
 
-  // Close modal on ESC key
+ 
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && !newPostModal.classList.contains('hidden')) {
       closeModal();
     }
   });
 
-  // Initial render with empty posts array
+  
   renderPosts();
 });

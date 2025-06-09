@@ -428,6 +428,7 @@ addEventSubmit.addEventListener("click", () => {
   const eventTitle = addEventTitle.value.trim();
   const eventType = eventTypeSelect.value;
   
+  
 
   if (!eventTitle || !eventType) {
     showNotification("Please fill all required fields");

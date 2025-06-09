@@ -2,23 +2,21 @@ body {
     font-family: Arial, sans-serif;
     background-color: #f9fafb;
     margin: 0;
-    
+    padding-top: 60px;
 }
 
 #medical .container .header h2,
 .weight-section h2 {
-  font-weight: 650;
-  font-size: 150%;
-  margin-bottom: 16px;
+    font-weight: 650;
+    font-size: 150%;
+    margin-bottom: 16px;
 }
-
 
 .container {
     border-radius: 10px;
     padding: 5px;
     max-width: 1000px;
     margin: auto;
-
 }
  
 .header {
@@ -26,10 +24,10 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
-    margin-top: 70px;
+    margin-top: 20px;
 }
 
-#addRecordBtn, #showWeightFormBtn,#submitBtn, #addWeightBtn{
+#addRecordBtn, #showWeightFormBtn, #submitBtn, #addWeightBtn {
     background-color: #4f46e5;
     color: rgb(255, 255, 255);
     padding: 10px 16px;
@@ -43,7 +41,7 @@ body {
 #showWeightFormBtn:hover,
 #submitBtn:hover,
 #addWeightBtn:hover {
-    background-color: #3121be; /* Slightly darker indigo */
+    background-color: #3121be;
 }
 
 .card-grid {
@@ -61,6 +59,7 @@ body {
     background-color: #f9fafb;
     border: 1px solid #e5e7eb;
     box-shadow: 0 4px 16px rgba(83, 83, 83, 0.1);
+    position: relative;
 }
 
 .vaccinations { background-color: #eff6ff; }
@@ -69,7 +68,7 @@ body {
 
 .weight-section {
     margin-top: 20px;
-    padding:40px;
+    padding: 40px;
     background-color: rgb(255, 255, 255);
     border-radius: 10px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.221);
@@ -172,50 +171,43 @@ canvas#weightChart {
 .hidden {
     display: none;
 }
-/* Base Styles */
-body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+
+/* Record items */
+.record-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
 }
 
-.tab-btn {
-    padding: 1rem 1.5rem;
-    font-weight: 500;
-    color: #4b5563; /* gray-600 */
-    border-bottom: 2px solid transparent;
+.record-item .extra {
+    color: #666;
+    font-size: 0.9em;
+    margin-left: 8px;
+}
+
+.delete-record {
     background: none;
     border: none;
+    color: #ef4444;
     cursor: pointer;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    margin-left: 8px;
+    padding: 4px;
 }
 
-.tab-btn:hover {
-    color: #4f46e5; /* indigo-600 */
-    border-bottom-color: #a5b4fc; /* indigo-300 */
+.delete-record:hover {
+    color: #dc2626;
 }
 
-.tab-btn.active {
-    color: #4f46e5; /* indigo-600 */
-    border-bottom-color: #4f46e5; /* indigo-600 */
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .card-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .update-weight-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
 }
-
-.tab-icon {
-    font-size: 1rem;
-}
-
-.tab-text {
-    font-size: 0.875rem;
-}
-
-/* Hide scrollbar for tabs */
-.tabs-container::-webkit-scrollbar {
-    display: none;
-}
-.tabs-container {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-}
-

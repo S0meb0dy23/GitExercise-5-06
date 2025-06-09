@@ -1,4 +1,4 @@
-/* Basic page style matches your provided style */
+
 body {
   font-family: Arial, sans-serif;
   background-color: #f9fafb;
@@ -34,14 +34,14 @@ body {
   background-color: #3121be;
 }
 
-/* Posts List */
+
 .post-list {
   display: flex;
   flex-direction: column;
   gap: 25px;
 }
 
-/* Single Post Card */
+
 .post {
   background-color: white;
   border-radius: 10px;
@@ -51,7 +51,7 @@ body {
   position: relative;
 }
 
-/* Post header */
+
 .post-header {
   display: flex;
   justify-content: space-between;
@@ -70,7 +70,7 @@ body {
   color: #888;
 }
 
-/* 3-dot menu container */
+
 .menu-container {
   position: relative;
   cursor: pointer;
@@ -121,7 +121,7 @@ body {
   background-color: #f0f0f0;
 }
 
-/* Post caption */
+
 .post-content {
   font-size: 1rem;
   color: #222;
@@ -129,7 +129,7 @@ body {
   white-space: pre-wrap;
 }
 
-/* Image slider - horizontal scroll */
+
 .image-slider {
   display: flex;
   gap: 10px;
@@ -149,7 +149,7 @@ body {
   object-fit: cover;
 }
 
-/* Scrollbar styling for webkit */
+
 .image-slider::-webkit-scrollbar {
   height: 8px;
 }
@@ -164,7 +164,7 @@ body {
   border-radius: 4px;
 }
 
-/* Post actions (like/comment buttons) */
+
 .post-actions {
   display: flex;
   gap: 20px;
@@ -198,7 +198,7 @@ body {
   color: #4f46e5;
 }
 
-/* Comments Section */
+
 .comments-section {
   margin-top: 15px;
   border-top: 1px solid #ddd;
@@ -221,7 +221,7 @@ body {
   font-weight: 600;
 }
 
-/* Comment input */
+
 .comment-input {
   display: flex;
   gap: 8px;
@@ -256,12 +256,12 @@ body {
   background-color: #3121be;
 }
 
-/* Hide elements with .hidden */
+
 .hidden {
   display: none !important;
 }
 
-/* Modal styles */
+
 .modal {
   position: fixed;
   top: 0;
@@ -356,16 +356,16 @@ body {
   cursor: default;
 }
 
-/* Fix margin and padding specifically for caption textarea in Add Post modal */
+
 #newPostModal textarea#postCaption {
-  width: 100%;           /* Full width inside modal */
-  padding: 12px 14px;    /* Comfortable padding */
-  margin: 0 0 20px 0;    /* No top margin, 20px bottom margin */
-  box-sizing: border-box;/* Include padding and border in width */
-  border-radius: 8px;    /* Match modal textarea style */
+  width: 100%;           
+  padding: 12px 14px;    
+  margin: 0 0 20px 0;    
+  box-sizing: border-box;
+  border-radius: 8px;    
   border: 1px solid #ccc;
   font-size: 1rem;
-  resize: vertical;      /* Allow vertical resizing only */
+  resize: vertical;     
   font-family: inherit;
   outline-offset: 2px;
   transition: border-color 0.2s;
@@ -375,7 +375,7 @@ body {
   border-color: #4f46e5;
 }
 
-/* Enhanced like button styles */
+
 .like-btn.liked {
   color: #4f46e5;
 }
@@ -384,7 +384,7 @@ body {
   color: #4f46e5;
 }
 
-/* Edit modal styles */
+
 .edit-modal textarea {
   width: 100%;
   border-radius: 8px;
@@ -403,7 +403,7 @@ body {
   border-color: #4f46e5;
 }
 
-/* Image preview in edit modal */
+
 .edit-image-preview {
   display: flex;
   gap: 10px;
