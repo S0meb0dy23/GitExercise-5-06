@@ -12,47 +12,48 @@
     <div class="profile-container">
         <header class="profile-header">
             <div class="avatar-wrapper">
-                <img src="https://wallpapers.com/images/hd/meme-profile-picture-2rhxt0ddudotto63.jpg" 
-                     alt="Profile" class="profile-avatar">
-                <button class="edit-avatar-btn">
-                    <i class="fas fa-camera"></i>
-                </button>
-            </div>
+                <img src="uploads/<?= htmlspecialchars($user['profile_image'] ?? 'default.jpg') ?>" 
+                alt="Profile" class="profile-avatar" id="profilePreview">
+                <label for="profile_image" class="edit-avatar-btn">
+                <i class="fas fa-camera"></i>
+                </label>
+                <input type="file" name="profile_image" id="profile_image" accept="image/*" style="display: none;">
+                </div>
             <h1 class="profile-title">Account Settings</h1>
             <p class="profile-subtitle">Manage your personal information</p>
         </header>
 
         <main class="profile-content">
-            <form class="settings-form">
+            <form class="settings-form" action="update-profile.php" method="POST" enctype="multipart/form-data">
                 <section class="form-section">
                     <h2 class="section-title">
                         <i class="fas fa-user section-icon"></i>
                         Personal Information
                     </h2>
-                    
+
                     <div class="input-group">
                         <div class="input-row">
                             <div class="input-field">
                                 <label for="first-name">First Name</label>
-                                <input type="text" id="first-name" placeholder="">
+                                <input type="text" id="first-name" name="first_name" placeholder="">
                             </div>
                             <div class="input-field">
                                 <label for="last-name">Last Name</label>
-                                <input type="text" id="last-name" placeholder="">
+                                <input type="text" id="last-name" name="last_name" placeholder="">
                             </div>
                         </div>
-                        
+
                         <div class="input-field">
                             <label for="username">Username</label>
                             <div class="input-with-prefix">
                                 <span class="input-prefix">@</span>
-                                <input type="text" id="username" placeholder="username">
+                                <input type="text" id="username" name="username" placeholder="username">
                             </div>
                         </div>
-                        
+
                         <div class="input-field">
                             <label for="bio">Bio</label>
-                            <textarea id="bio" placeholder="Tell something about yourself..."></textarea>
+                            <textarea id="bio" name="bio" placeholder="Tell something about yourself..."></textarea>
                             <div class="char-count">0/150</div>
                         </div>
                     </div>
@@ -63,12 +64,12 @@
                         <i class="fas fa-envelope section-icon"></i>
                         Contact Information
                     </h2>
-                    
+
                     <div class="input-group">
                         <div class="input-field">
                             <label for="email">Email Address</label>
                             <div class="input-with-badge">
-                                <input type="email" id="email" placeholder="your.email@example.com">
+                                <input type="email" id="email" name="email" placeholder="your.email@example.com">
                                 <span class="verified-badge">
                                     <i class="fas fa-check-circle"></i> Verified
                                 </span>
@@ -82,23 +83,23 @@
                         <i class="fas fa-lock section-icon"></i>
                         Security
                     </h2>
-                    
+
                     <div class="input-group">
                         <div class="input-field">
                             <label for="current-password">Current Password</label>
                             <div class="password-input">
-                                <input type="password" id="current-password" placeholder="••••••••">
+                                <input type="password" id="current-password" name="current_password" placeholder="••••••••">
                                 <button type="button" class="toggle-password">
                                     <i class="fas fa-eye"></i>
                                 </button>
                             </div>
                         </div>
-                        
+
                         <div class="input-row">
                             <div class="input-field">
                                 <label for="new-password">New Password</label>
                                 <div class="password-input">
-                                    <input type="password" id="new-password" placeholder="••••••••">
+                                    <input type="password" id="new-password" name="new_password" placeholder="••••••••">
                                     <button type="button" class="toggle-password">
                                         <i class="fas fa-eye"></i>
                                     </button>
@@ -107,7 +108,7 @@
                             <div class="input-field">
                                 <label for="confirm-password">Confirm Password</label>
                                 <div class="password-input">
-                                    <input type="password" id="confirm-password" placeholder="••••••••">
+                                    <input type="password" id="confirm-password" name="confirm_password" placeholder="••••••••">
                                     <button type="button" class="toggle-password">
                                         <i class="fas fa-eye"></i>
                                     </button>
@@ -118,7 +119,7 @@
                 </section>
 
                 <div class="form-actions">
-                    <button type="button" class="btn btn-outline">
+                    <button type="reset" class="btn btn-outline">
                         <i class="fas fa-times"></i> Cancel
                     </button>
                     <button type="submit" class="btn btn-primary">
@@ -129,6 +130,29 @@
         </main>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // Password toggle
+        document.querySelectorAll('.toggle-password').forEach(button => {
+            button.addEventListener('click', () => {
+                const input = button.previousElementSibling;
+                input.type = input.type === 'password' ? 'text' : 'password';
+                button.querySelector('i').classList.toggle('fa-eye-slash');
+            });
+        });
+
+        // Image preview
+        const input = document.getElementById("profile-image-upload");
+        const preview = document.getElementById("profilePreview");
+
+        input.addEventListener("change", function () {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    </script>
 </body>
 </html>
