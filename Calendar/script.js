@@ -459,7 +459,7 @@ addEventSubmit.addEventListener("click", () => {
     })
   })
   .then(() => {
-      showNotification("Event updated");
+      showNotification("Event Updated");
       getEvents(); // Refresh events after update
     });
 } else {
@@ -478,7 +478,7 @@ addEventSubmit.addEventListener("click", () => {
     })
   })
   .then(() => {
-  showNotification("Event added/updated");
+  showNotification("Event Added");
   getEvents(); // This will refresh the events
 
     setTimeout(() => {
