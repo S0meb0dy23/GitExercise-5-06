@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if (password_verify($password, $user["password"])) {
             $_SESSION["username"] = $user["username"];
-            header("Location: ../pet-profile/pet-profile.html");
+            header("Location: ../pet-profile/index.html");
             exit();
         } else {
             echo "Incorrect password.";
