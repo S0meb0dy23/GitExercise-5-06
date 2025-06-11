@@ -15,10 +15,8 @@
   padding: 0 1rem;
 }
 
-
-/* Add padding to body to prevent content from hiding behind fixed navbar */
 body {
-  padding-top: 55px !important; /* Replace [navbar-height] with your navbar's actual height */
+  padding-top: 55px !important; 
   opacity: 0;
   transition: opacity 0.1s ease-in;
 }
@@ -27,22 +25,21 @@ body.fade-in {
   opacity: 1;
 }
 
-/* Rest of your existing styles... */
 .navbar-wrapper .tab-btn {
   transition: all 0.3s ease !important;
   display: inline-flex !important;
   align-items: center !important;
   padding: 1rem 1rem !important;
   font-weight: 500 !important;
-  color: #4b5563 !important; /* default gray */
-  border-bottom: 2px solid transparent !important; /* reserve border space */
+  color: #4b5563 !important; 
+  border-bottom: 2px solid transparent !important; 
   text-decoration: none !important;
-  box-sizing: border-box; /* include border in width */
-  min-width: 100px; /* optional: fix min width to keep consistent */
-  justify-content: center; /* center icon/text */
+  box-sizing: border-box; 
+  min-width: 100px; 
+  justify-content: center; 
 }
 .navbar-wrapper .tab-btn:hover {
-  color: #4f46e5 !important; /* indigo */
+  color: #4f46e5 !important; 
   border-bottom-color: #a5b4fc !important;
 }
 
@@ -54,7 +51,7 @@ body.fade-in {
   margin-right: 0.5rem !important;
 }
 
-/* Optional: Hide scrollbars on small screens */
+
 .navbar-wrapper .flex::-webkit-scrollbar {
   display: none;
 }

@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (pets.length > 0) {
                             loadPet(pets[0].id);
                         } else {
-                            // Create a new pet if last one was deleted
+                           
                             const newPet = {
                                 name: "My Pet",
                                 breed: "",
@@ -214,8 +214,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 await deleteGalleryImage(image.id);
                 galleryImages = galleryImages.filter(img => img.id !== image.id);
                 renderGallery();
-                
-                // Update avatar if we deleted the first image
+
                 if (galleryImages.length > 0) {
                     petAvatar.src = galleryImages[0].image;
                 } else {
@@ -315,7 +314,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         });
                         renderGallery();
                         
-                        // Update avatar if this is the first image
                         if (galleryImages.length === 1) {
                             petAvatar.src = reader.result;
                         }

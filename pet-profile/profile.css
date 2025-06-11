@@ -1,4 +1,3 @@
-/* ===== Base Styles ===== */
 * {
     margin: 0;
     padding: 0;
@@ -17,7 +16,6 @@ body {
     align-items: center;
 }
 
-/* ===== Container Styles ===== */
 .profile-container {
     width: 100%;
     max-width: 800px;
@@ -27,7 +25,6 @@ body {
     overflow: hidden;
 }
 
-/* ===== Header Styles ===== */
 .profile-header {
     background: linear-gradient(135deg, #6366f1, #8b5cf6);
     color: white;
@@ -91,7 +88,6 @@ body {
     font-weight: 300;
 }
 
-/* ===== Form Styles ===== */
 .profile-content {
     padding: 30px;
 }
