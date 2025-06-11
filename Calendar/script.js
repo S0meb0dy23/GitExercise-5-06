@@ -314,6 +314,7 @@ function updateEvents(date) {
   }
 
   addEventActions();
+  addDeleteEventActions();
 }
 
 function addEventActions() {
@@ -351,33 +352,72 @@ function addEventActions() {
     eventAmPmTo.value = toAmPm;
   });
 });
-
+}
   // Delete Event
+function addDeleteEventActions() {
   const deleteIcons = document.querySelectorAll(".delete-event");
   deleteIcons.forEach(icon => {
     icon.addEventListener("click", (e) => {
       e.stopPropagation();
-      const confirmDelete = confirm("Are you sure you want to delete this event?");
-      if (!confirmDelete) return;
+      const eventElement = e.target.closest(".event");
+      const eventId = eventElement.dataset.id;
 
-      const eventId = Number(e.target.closest(".event").dataset.id);
-      if (!eventsArr.find(ev => ev.id === eventId)) return;
-
-      fetch('delete-event.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ id: eventId })
-      })
-      .then(response => response.text())
-      .then(data => {
-        console.log(data);
-        showNotification("Event deleted");
-        getEvents();
-      });
+      if (confirm("Are you sure you want to delete this event?")) {
+        fetch('delete-event.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: new URLSearchParams({ id: eventId })
+        })
+        .then(response => response.text())
+        .then(data => {
+          alert(data);
+          getEvents(); // Refresh event list
+        })
+        .catch(error => {
+          alert("Failed to delete event.");
+          console.error(error);
+        });
+      }
     });
   });
-
 }
+
+function getEvents() {
+  fetch("get-events.php")
+    .then(response => response.json())
+    .then(events => {
+      eventsContainer.innerHTML = "";
+
+      events.forEach(event => {
+        const eventType = getEventType(event.type);
+        const eventEl = document.createElement("div");
+        eventEl.classList.add("event");
+        eventEl.dataset.id = event.id;
+        eventEl.style.borderLeft = `4px solid ${eventType.color}`;
+        eventEl.innerHTML = `
+          <div class="title">
+            <i class="fas fa-circle" style="color: ${eventType.color}"></i>
+            <h3 class="event-title">${event.title}</h3>
+          </div>
+          <div class="event-time">
+            <span>${event.time_from} - ${event.time_to}</span>
+            <div class="event-actions">
+              <i class="fas fa-edit edit-event" title="Edit"></i>
+              <i class="fas fa-trash delete-event" title="Delete"></i>
+            </div>
+          </div>
+        `;
+        eventsContainer.appendChild(eventEl);
+      });
+
+      // Attach the delete action listeners
+      addEventActions();
+      addDeleteEventActions();
+    });
+}
+
 
 // Create event HTML element
 function createEventElement(event) {
@@ -427,7 +467,6 @@ addEventTitle.addEventListener("input", (e) => {
 addEventSubmit.addEventListener("click", () => {
   const eventTitle = addEventTitle.value.trim();
   const eventType = eventTypeSelect.value;
-  
   
 
   if (!eventTitle || !eventType) {
@@ -523,20 +562,21 @@ function getEvents() {
 
 // Quick notification popup (basic example)
 function showNotification(message) {
-  let notification = document.querySelector(".notification");
-  if (!notification) {
-    notification = document.createElement("div");
-    notification.className = "notification";
-    document.body.appendChild(notification);
-  }
-
-  notification.textContent = message;
-  notification.classList.add("show");
+  const notif = document.createElement("div");
+  notif.className = "notification";
+  notif.textContent = message;
+  document.body.appendChild(notif);
 
   setTimeout(() => {
-    notification.classList.remove("show");
-  }, 2500);
+    notif.classList.add("show");
+  }, 10);
+
+  setTimeout(() => {
+    notif.classList.remove("show");
+    setTimeout(() => notif.remove(), 300);
+  }, 3000);
 }
+
 
 // Initialize everything on load
 initEventTypes();
