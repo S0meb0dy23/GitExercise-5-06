@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-  // Load the navbar from navbar.html
   fetch('/navbar.html')
     .then(response => {
       if (!response.ok) throw new Error(`Failed to load navbar: ${response.status}`);
@@ -10,18 +9,14 @@ document.addEventListener('DOMContentLoaded', function () {
       if (container) {
         container.innerHTML = html;
         highlightCurrentPage();
-        enablePageTransition(); // 🔄 Add smooth transition after navbar loads
+        enablePageTransition(); 
       }
     })
     .catch(error => {
       console.error('Navbar loading error:', error);
     });
-
-  // Trigger fade-in once content loads
   document.body.classList.add('fade-in');
 });
-
-// Highlight the active link in the navbar
 function highlightCurrentPage() {
   const navLinks = document.querySelectorAll('.tab-btn');
   const currentPath = window.location.pathname;
