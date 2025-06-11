@@ -154,26 +154,9 @@ nav {
     margin-bottom: 20px;
 }
 
-.blog2 {
-    width: 80%;
-    margin: auto;
-    text-align: center;
-    padding-top: 100px;
-    font-size: 40px;
-    margin-bottom: 20px;
-}
-
 .blog-img {
     width: 75%;
     height: auto;
-    max-width: 450px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-}
-
-.blog-img2 {
-    width: 90%;
-    height: 90%;
     max-width: 450px;
     border-radius: 10px;
     margin-bottom: 20px;
