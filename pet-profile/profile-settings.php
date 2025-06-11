@@ -1,26 +1,28 @@
 <?php
 session_start();
 $conn = new mysqli("localhost", "root", "", "user_db");
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 
-if (!isset($_SESSION['username'])) {
+if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit;
 }
 
-$username = $_SESSION['username'];
-$stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
-$stmt->bind_param("s", $username);
+$user_id = $_SESSION['user_id'];
+
+$stmt = $conn->prepare("SELECT * FROM users WHERE id = ?");
+$stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
-$stmt->close();
-$conn->close();
 
-// Set profile image path (fallback to default)
-$profileImage = !empty($user['profile_image']) && file_exists('uploads/' . $user['profile_image'])
-    ? 'uploads/' . htmlspecialchars($user['profile_image'])
-    : 'assets/default.jpg'; // Make sure this default.jpg exists in assets/
+if (!$user) die("User not found.");
+
+$profileImage = !empty($user['profile_image']) ? 'uploads/' . $user['profile_image'] : 'assets/default-avatar.png';
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,44 +32,19 @@ $profileImage = !empty($user['profile_image']) && file_exists('uploads/' . $user
   <link rel="stylesheet" href="profile.css"/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
-  <style>
-    .profile-avatar {
-      width: 120px;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 50%;
-      border: 3px solid #ccc;
-    }
-    .avatar-wrapper {
-      position: relative;
-      display: inline-block;
-    }
-    .camera-icon {
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      background: #fff;
-      border-radius: 50%;
-      padding: 6px;
-      cursor: pointer;
-    }
-    input[type="file"] {
-      display: none;
-    }
-  </style>
 </head>
 <body>
   <div class="profile-container">
     <header class="profile-header">
       <div class="avatar-wrapper">
-        <img id="profilePreview" src="<?= $profileImage ?>" alt="Profile" class="profile-avatar"/>
+        <img id="profilePreview" src="<?= $profileImage ?>" alt="Profile" class="profile-avatar" />
+        <form method="POST" action="update-profile.php" enctype="multipart/form-data">
         <label for="profile_image" class="camera-icon">
-          <i class="fas fa-camera"></i>
+        <i class="fas fa-camera"></i>
         </label>
-        <form method="POST" enctype="multipart/form-data" action="update-profile.php">
-          <input type="file" name="profile_image" id="profile_image" accept="image/*" onchange="this.form.submit();"/>
-        </form>
-      </div>
+        <input type="file" name="profile_image" id="profile_image" accept="image/*" onchange="this.form.submit();" style="display: none;">
+    </form>
+    </div>
 
       <h1 class="profile-title">Account Settings</h1>
       <p class="profile-subtitle">Manage your personal information</p>
@@ -87,7 +64,6 @@ $profileImage = !empty($user['profile_image']) && file_exists('uploads/' . $user
       <form class="settings-form" method="POST" action="update-profile.php" enctype="multipart/form-data">
         <section class="form-section">
           <h2 class="section-title"><i class="fas fa-user section-icon"></i> Personal Information</h2>
-
           <div class="input-group">
             <div class="input-row">
               <div class="input-field">
@@ -99,7 +75,6 @@ $profileImage = !empty($user['profile_image']) && file_exists('uploads/' . $user
                 <input type="text" name="last_name" id="last-name" value="<?= htmlspecialchars($user['last_name']) ?>">
               </div>
             </div>
-
             <div class="input-field">
               <label for="username">Username</label>
               <div class="input-with-prefix">
@@ -107,24 +82,10 @@ $profileImage = !empty($user['profile_image']) && file_exists('uploads/' . $user
                 <input type="text" name="username" id="username" value="<?= htmlspecialchars($user['username']) ?>">
               </div>
             </div>
-
             <div class="input-field">
               <label for="bio">Bio</label>
               <textarea name="bio" id="bio"><?= htmlspecialchars($user['bio']) ?></textarea>
               <div class="char-count">0/150</div>
-            </div>
-          </div>
-        </section>
-
-        <section class="form-section">
-          <h2 class="section-title"><i class="fas fa-envelope section-icon"></i> Contact Information</h2>
-          <div class="input-group">
-            <div class="input-field">
-              <label for="email">Email Address</label>
-              <div class="input-with-badge">
-                <input type="email" name="email" id="email" value="<?= htmlspecialchars($user['email']) ?>">
-                <span class="verified-badge"><i class="fas fa-check-circle"></i> Verified</span>
-              </div>
             </div>
           </div>
         </section>

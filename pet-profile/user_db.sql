@@ -11,18 +11,25 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
--- Create the database if it doesn't exist
-CREATE DATABASE IF NOT EXISTS `user_db` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
--- Select the database
-USE `user_db`;
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
 
--- Drop the table if it already exists (optional, if you want a fresh import each time)
-DROP TABLE IF EXISTS `users`;
+--
+-- Database: `user_db`
+--
+CREATE DATABASE IF NOT EXISTS user_db;
+USE user_db;
+-- --------------------------------------------------------
 
--- Create the `users` table
+--
+-- Table structure for table `users`
+--
+
 CREATE TABLE `users` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL,
   `username` varchar(50) NOT NULL,
   `email` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
@@ -33,17 +40,28 @@ CREATE TABLE `users` (
   `bio` text DEFAULT NULL,
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `reset_token` varchar(255) DEFAULT NULL,
-  `profile_image` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `profile_image` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Insert sample user data
-INSERT INTO `users` (`username`, `email`, `password`, `verify_token`, `is_verified`, `first_name`, `last_name`, `bio`, `updated_at`, `reset_token`, `profile_image`) VALUES
-('randomly23', 'ckf3090@gmail.com', '$2y$10$csV2U517RIuoRM6tgufbsuMzabQZccxgXa5vFIqC.Q4CvY.fccJAS', '', 1, 'zach', 'fareier', 'hi', '2025-06-10 05:30:47', NULL, 'img_6847bc848306a1.16084952.png'),
-('something21', 'ckf3080@gmail.com', '$2y$10$hvJmGTfvyL6ICPAXyhB4FudKEuTri1Xvu2tDtMN/vleQuxtJu08WK', '', 1, 'Peter', 'carman', 'hello', '2025-06-10 05:01:09', NULL, 'img_6847bc154d2959.47178876.png');
+--
+-- Dumping data for table `users`
+--
 
+INSERT INTO `users` (`id`, `username`, `email`, `password`, `verify_token`, `is_verified`, `first_name`, `last_name`, `bio`, `updated_at`, `reset_token`, `profile_image`) VALUES
+(0, 'randomly23', 'ckf3090@gmail.com', '$2y$10$csV2U517RIuoRM6tgufbsuMzabQZccxgXa5vFIqC.Q4CvY.fccJAS', '', 1, 'zach', 'fareier', 'hi', '2025-06-10 05:30:47', NULL, 'img_6847bc848306a1.16084952.png'),
+(0, 'something21', 'ckf3080@gmail.com', '$2y$10$hvJmGTfvyL6ICPAXyhB4FudKEuTri1Xvu2tDtMN/vleQuxtJu08WK', '', 1, 'Peter', 'carman', 'hello', '2025-06-10 05:01:09', NULL, 'img_6847bc154d2959.47178876.png');
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`,`username`,`email`,`password`,`verify_token`,`is_verified`);
 COMMIT;
 
-SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT;
-SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS;
-SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

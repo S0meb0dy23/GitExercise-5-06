@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pet Community</title>
+  <link rel="stylesheet" href="com.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+  <main>
+    <section class="container">
+      <div class="header">
+        <h2>Pet Community</h2>
+        <div>
+          <span id="currentUser">User</span>
+          <button id="changeUsernameBtn" title="Change username">✎</button>
+          <button id="newPostBtn"><i class="fas fa-plus"></i> New Post</button>
+        </div>
+      </div>
+      <div id="postList" class="post-list"></div>
+    </section>
+  </main>
+
+  <div id="newPostModal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Create New Post</h3>
+      <button class="close">&times;</button>
+      <form id="newPostForm" enctype="multipart/form-data">
+        <textarea id="postCaption" placeholder="Write your caption..." rows="4" required></textarea>
+        <input type="file" id="postImages" name="images[]" accept="image/*" multiple />
+        <div id="image-preview-container"></div>
+        <button type="submit">Post</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="com.js" defer></script>
+</body>
+</html>
