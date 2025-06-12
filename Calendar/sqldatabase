@@ -7,5 +7,6 @@ CREATE TABLE `events` (
   `day` INT NOT NULL,
   `month` INT NOT NULL,
   `year` INT NOT NULL,
+  `username` varchar(100) NOT NULL
   PRIMARY KEY (`id`)
 );
