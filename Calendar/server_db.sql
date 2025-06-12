@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 12, 2025 at 11:26 AM
+-- Generation Time: Jun 12, 2025 at 12:43 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -139,6 +139,20 @@ INSERT INTO `likes` (`id`, `post_id`, `user_id`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `medical_records`
+--
+
+CREATE TABLE `medical_records` (
+  `id` int(11) NOT NULL,
+  `pet_id` int(11) NOT NULL,
+  `type` enum('vaccination','medication','condition') NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `info` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `pets`
 --
 
@@ -226,6 +240,19 @@ CREATE TABLE `user_profile` (
 INSERT INTO `user_profile` (`id`, `username`) VALUES
 (1, 'asd');
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `weight_records`
+--
+
+CREATE TABLE `weight_records` (
+  `id` int(11) NOT NULL,
+  `pet_id` int(11) NOT NULL,
+  `record_date` date NOT NULL,
+  `weight` float NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 --
 -- Indexes for dumped tables
 --
@@ -267,6 +294,13 @@ ALTER TABLE `likes`
   ADD KEY `user_id` (`user_id`);
 
 --
+-- Indexes for table `medical_records`
+--
+ALTER TABLE `medical_records`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `pet_id` (`pet_id`);
+
+--
 -- Indexes for table `pets`
 --
 ALTER TABLE `pets`
@@ -290,6 +324,13 @@ ALTER TABLE `users`
 --
 ALTER TABLE `user_profile`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `weight_records`
+--
+ALTER TABLE `weight_records`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `pet_id` (`pet_id`,`record_date`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -326,6 +367,12 @@ ALTER TABLE `likes`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT for table `medical_records`
+--
+ALTER TABLE `medical_records`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `pets`
 --
 ALTER TABLE `pets`
@@ -348,6 +395,12 @@ ALTER TABLE `users`
 --
 ALTER TABLE `user_profile`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `weight_records`
+--
+ALTER TABLE `weight_records`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
@@ -380,10 +433,22 @@ ALTER TABLE `likes`
   ADD CONSTRAINT `likes_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user_profile` (`id`);
 
 --
+-- Constraints for table `medical_records`
+--
+ALTER TABLE `medical_records`
+  ADD CONSTRAINT `medical_records_ibfk_1` FOREIGN KEY (`pet_id`) REFERENCES `pets` (`id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `posts`
 --
 ALTER TABLE `posts`
   ADD CONSTRAINT `posts_ibfk_1` FOREIGN KEY (`author_id`) REFERENCES `user_profile` (`id`);
+
+--
+-- Constraints for table `weight_records`
+--
+ALTER TABLE `weight_records`
+  ADD CONSTRAINT `weight_records_ibfk_1` FOREIGN KEY (`pet_id`) REFERENCES `pets` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
