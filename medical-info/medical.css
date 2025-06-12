@@ -1,0 +1,232 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9fafb;
+    margin: 0;
+    padding-top: 80px;
+}
+
+#medical .container .header h2,
+.weight-section h2 {
+    font-weight: 650;
+    font-size: 150%;
+    margin-bottom: 16px;
+}
+
+.container {
+    border-radius: 10px;
+    padding: 5px;
+    max-width: 1000px;
+    margin: auto;
+}
+ 
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    margin-top: 20px;
+}
+
+#addRecordBtn, #showWeightFormBtn, #submitBtn, #addWeightBtn {
+    background-color: #4f46e5;
+    color: rgb(255, 255, 255);
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#addRecordBtn:hover,
+#showWeightFormBtn:hover,
+#submitBtn:hover,
+#addWeightBtn:hover {
+    background-color: #3121be;
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 100px;
+    box-shadow: #2a2c31;
+}
+
+.card {
+    border-radius: 8px;
+    padding: 30px;
+    margin-bottom: 50px;
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 16px rgba(83, 83, 83, 0.1);
+    position: relative;
+}
+
+.vaccinations { background-color: #eff6ff; }
+.medications { background-color: #f3e8ff; }
+.conditions { background-color: #fff7ed; }
+
+.weight-section {
+    margin-top: 20px;
+    padding: 40px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.221);
+}
+
+.weight-section h3 {
+    font-size: 1.4rem;
+    margin-bottom: 16px;
+}
+
+.weight-chart-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #5e5e5e71;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+canvas#weightChart {
+    max-height: 550px;
+    width: 100%;
+}
+
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: white;
+    padding: 40px;
+    border-radius: 8px;
+    width: 300px;
+    position: relative;
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.modal-content .close {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.modal-content form {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-content input,
+.modal-content select {
+    margin-bottom: 10px;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.update-weight-form {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.update-weight-form input {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    color: #374151;
+}
+
+.update-weight-form button {
+    background-color: #4f46e5;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.hidden {
+    display: none;
+}
+
+
+.record-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.record-item .extra {
+    color: #666;
+    font-size: 0.9em;
+    margin-left: 8px;
+}
+
+.delete-record {
+    background: none;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+    margin-left: 8px;
+    padding: 4px;
+}
+
+.delete-record:hover {
+    color: #dc2626;
+}
+
+
+@media (max-width: 768px) {
+    .card-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .update-weight-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+.pet-selector {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pet-selector label {
+    font-size: 1rem;
+}
+
+.pet-selector select {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+}
