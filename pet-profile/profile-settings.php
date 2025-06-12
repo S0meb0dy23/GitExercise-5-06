@@ -1,6 +1,6 @@
 <?php
 session_start();
-$conn = new mysqli("localhost", "root", "", "user_db");
+$conn = new mysqli("localhost", "root", "", "server_db");
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
@@ -39,12 +39,12 @@ $profileImage = !empty($user['profile_image']) ? 'uploads/' . $user['profile_ima
       <div class="avatar-wrapper">
         <img id="profilePreview" src="<?= $profileImage ?>" alt="Profile" class="profile-avatar" />
         <form method="POST" action="update-profile.php" enctype="multipart/form-data">
-        <label for="profile_image" class="camera-icon">
-        <i class="fas fa-camera"></i>
-        </label>
-        <input type="file" name="profile_image" id="profile_image" accept="image/*" onchange="this.form.submit();" style="display: none;">
-    </form>
-    </div>
+          <label for="profile_image" class="camera-icon">
+            <i class="fas fa-camera"></i>
+          </label>
+          <input type="file" name="profile_image" id="profile_image" accept="image/*" onchange="this.form.submit();" style="display: none;">
+        </form>
+      </div>
 
       <h1 class="profile-title">Account Settings</h1>
       <p class="profile-subtitle">Manage your personal information</p>
@@ -83,9 +83,9 @@ $profileImage = !empty($user['profile_image']) ? 'uploads/' . $user['profile_ima
               </div>
             </div>
             <div class="input-field">
-              <label for="bio">Bio</label>
-              <textarea name="bio" id="bio"><?= htmlspecialchars($user['bio']) ?></textarea>
-              <div class="char-count">0/150</div>
+              <label for="bio">Note</label>
+              <textarea name="bio" id="bio" maxlength="150"><?= htmlspecialchars($user['bio']) ?></textarea>
+              <div class="char-count" id="bio-count">0/150</div>
             </div>
           </div>
         </section>
@@ -130,6 +130,7 @@ $profileImage = !empty($user['profile_image']) ? 'uploads/' . $user['profile_ima
   </div>
 
   <script>
+    // Toggle password visibility
     document.querySelectorAll('.toggle-password').forEach(btn => {
       btn.addEventListener('click', () => {
         const input = btn.previousElementSibling;
@@ -137,6 +138,17 @@ $profileImage = !empty($user['profile_image']) ? 'uploads/' . $user['profile_ima
         btn.innerHTML = input.type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
       });
     });
+
+    // Live bio character counter
+    const bio = document.getElementById('bio');
+    const count = document.getElementById('bio-count');
+
+    function updateCharCount() {
+      count.textContent = `${bio.value.length}/600`;
+    }
+
+    bio.addEventListener('input', updateCharCount);
+    window.addEventListener('DOMContentLoaded', updateCharCount); // update on load
   </script>
 </body>
 </html>
