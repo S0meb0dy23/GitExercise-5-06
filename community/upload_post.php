@@ -1,6 +1,6 @@
 <?php
 session_start();
-$conn = new mysqli("localhost", "root", "", "pet_community");
+$conn = new mysqli("localhost", "root", "", "server_db");
 if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
 
 $session_id = session_id();

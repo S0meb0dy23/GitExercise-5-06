@@ -1,6 +1,6 @@
 <?php
 $host = 'localhost';
-$db = 'pawpulse';
+$db = 'server_db';
 $user = 'root';
 $pass = '';
 
