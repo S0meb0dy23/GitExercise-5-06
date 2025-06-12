@@ -1,66 +1,52 @@
 <?php
 session_start();
-$conn = new mysqli("localhost", "root", "", "server_db");
-if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
+require 'db.php';
 
-$session_id = session_id();
-$user_id = null;
-$username = "User";
+$user_id = $_SESSION['user_id'] ?? 0;
 
-$userQuery = $conn->prepare("SELECT id, username FROM users WHERE session_id = ?");
-$userQuery->bind_param("s", $session_id);
-$userQuery->execute();
-$userQuery->bind_result($user_id, $username);
-$userQuery->fetch();
-$userQuery->close();
-
-$liked_posts = $_SESSION['liked_posts'] ?? [];
-$postsResult = $conn->query("
-  SELECT p.*, u.username AS author 
-  FROM posts p 
-  LEFT JOIN users u ON p.user_id = u.id 
-  ORDER BY p.created_at DESC
-");
+$sql = "SELECT p.*, u.username AS author
+        FROM posts p
+        JOIN user_profile u ON p.author_id = u.id
+        ORDER BY p.created_at DESC";
+$result = $conn->query($sql);
 
 $posts = [];
-while ($row = $postsResult->fetch_assoc()) {
-    $post_id = $row['id'];
 
-    $imgQuery = $conn->prepare("SELECT id FROM images WHERE post_id = ?");
-    $imgQuery->bind_param("i", $post_id);
-    $imgQuery->execute();
-    $imgResult = $imgQuery->get_result();
+while ($row = $result->fetch_assoc()) {
+  $post_id = $row['id'];
 
-    $images = [];
-    while ($imgRow = $imgResult->fetch_assoc()) {
-        $images[] = "get_image.php?id=" . $imgRow['id'];
-    }
+  $img_result = $conn->query("SELECT image_path FROM images WHERE post_id = $post_id");
+  $images = [];
+  while ($img = $img_result->fetch_assoc()) {
+    $images[] = $img['image_path'];
+  }
 
-    $comments = [];
-    $comQuery = $conn->prepare("
-        SELECT c.text, u.username AS author 
-        FROM comments c 
-        LEFT JOIN users u ON c.user_id = u.id 
-        WHERE c.post_id = ? ORDER BY c.created_at
-    ");
-    $comQuery->bind_param("i", $post_id);
-    $comQuery->execute();
-    $comResult = $comQuery->get_result();
-    while ($com = $comResult->fetch_assoc()) {
-        $comments[] = $com;
-    }
+  $like_result = $conn->query("SELECT COUNT(*) AS count FROM likes WHERE post_id = $post_id");
+  $like_count = $like_result->fetch_assoc()['count'];
 
-    $posts[] = [
-        "id" => $post_id,
-        "author" => $row['author'] ?? "User",
-        "caption" => $row['caption'],
-        "date" => $row['created_at'],
-        "images" => $images,
-        "likes" => $row['likes'],
-        "liked" => in_array($post_id, $liked_posts),
-        "comments" => $comments
-    ];
+  $liked_result = $conn->query("SELECT 1 FROM likes WHERE post_id = $post_id AND user_id = $user_id");
+  $liked = $liked_result->num_rows > 0;
+
+  $comment_result = $conn->query("SELECT c.text, u.username AS author
+                                  FROM comments c
+                                  JOIN user_profile u ON c.user_id = u.id
+                                  WHERE post_id = $post_id
+                                  ORDER BY c.created_at ASC");
+  $comments = [];
+  while ($c = $comment_result->fetch_assoc()) {
+    $comments[] = $c;
+  }
+
+  $posts[] = [
+    "id" => $post_id,
+    "author" => $row['author'],
+    "caption" => $row['caption'],
+    "date" => $row['created_at'],
+    "images" => $images,
+    "likes" => $like_count,
+    "liked" => $liked,
+    "comments" => $comments
+  ];
 }
 
 echo json_encode($posts);
-?>

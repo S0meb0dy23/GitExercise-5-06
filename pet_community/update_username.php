@@ -1,18 +1,14 @@
 <?php
 session_start();
-$conn = new mysqli("localhost", "root", "", "server_db");
-if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
+require 'db.php';
 
-$session_id = session_id();
-$username = trim($_POST['username']);
+if (!isset($_SESSION['user_id'])) exit;
 
-if ($username === "") $username = "User";
+$username = $_POST['username'];
+$user_id = $_SESSION['user_id'];
 
-$stmt = $conn->prepare("INSERT INTO users (session_id, username) VALUES (?, ?)
-                        ON DUPLICATE KEY UPDATE username = VALUES(username)");
-$stmt->bind_param("ss", $session_id, $username);
+$stmt = $conn->prepare("UPDATE user_profile SET username = ? WHERE id = ?");
+$stmt->bind_param("si", $username, $user_id);
 $stmt->execute();
-$stmt->close();
 
-echo json_encode(["success" => true, "username" => $username]);
-?>
+echo json_encode(["username" => $username]);

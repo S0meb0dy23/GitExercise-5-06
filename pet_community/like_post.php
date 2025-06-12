@@ -1,27 +1,18 @@
 <?php
 session_start();
-$conn = new mysqli("localhost", "root", "", "server_db");
-if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
+require 'db.php';
 
-$post_id = intval($_POST['post_id']);
-if (!isset($_SESSION['liked_posts'])) $_SESSION['liked_posts'] = [];
+$user_id = $_SESSION['user_id'];
+$post_id = $_POST['post_id'];
 
-$liked = in_array($post_id, $_SESSION['liked_posts']);
-
-if ($liked) {
-    $stmt = $conn->prepare("UPDATE posts SET likes = likes - 1 WHERE id = ? AND likes > 0");
-    $stmt->bind_param("i", $post_id);
-    $stmt->execute();
-    $_SESSION['liked_posts'] = array_diff($_SESSION['liked_posts'], [$post_id]);
+$check = $conn->query("SELECT * FROM likes WHERE post_id = $post_id AND user_id = $user_id");
+if ($check->num_rows > 0) {
+  $conn->query("DELETE FROM likes WHERE post_id = $post_id AND user_id = $user_id");
+  $liked = false;
 } else {
-    $stmt = $conn->prepare("UPDATE posts SET likes = likes + 1 WHERE id = ?");
-    $stmt->bind_param("i", $post_id);
-    $stmt->execute();
-    $_SESSION['liked_posts'][] = $post_id;
+  $conn->query("INSERT INTO likes (post_id, user_id) VALUES ($post_id, $user_id)");
+  $liked = true;
 }
-$stmt->close();
 
-$res = $conn->query("SELECT likes FROM posts WHERE id = $post_id");
-$row = $res->fetch_assoc();
-echo json_encode(["liked" => !$liked, "likes" => $row['likes']]);
-?>
+$likes = $conn->query("SELECT COUNT(*) AS count FROM likes WHERE post_id = $post_id")->fetch_assoc()['count'];
+echo json_encode(["liked" => $liked, "likes" => $likes]);

@@ -1,17 +1,17 @@
 <?php
 session_start();
-$conn = new mysqli("localhost", "root", "", "server_db");
-if ($conn->connect_error) die("Connection failed");
+require 'db.php';
 
-$session_id = session_id();
-$username = "User";
+if (!isset($_SESSION['user_id'])) {
+  $username = "Guest" . rand(1000, 9999);
+  $stmt = $conn->prepare("INSERT INTO user_profile (username) VALUES (?)");
+  $stmt->bind_param("s", $username);
+  $stmt->execute();
+  $_SESSION['user_id'] = $stmt->insert_id;
+}
 
-$stmt = $conn->prepare("SELECT username FROM users WHERE session_id = ?");
-$stmt->bind_param("s", $session_id);
-$stmt->execute();
-$stmt->bind_result($username);
-$stmt->fetch();
-$stmt->close();
+$user_id = $_SESSION['user_id'];
+$result = $conn->query("SELECT username FROM user_profile WHERE id = $user_id");
+$user = $result->fetch_assoc();
 
-echo json_encode(["username" => $username]);
-?>
+echo json_encode(["username" => $user['username']]);
