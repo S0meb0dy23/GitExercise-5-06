@@ -1,9 +1,19 @@
 <?php
+session_start();
 include 'db.php';
 
-$result = $mysqli->query("SELECT * FROM events");
-$events = [];
+// Check if user is logged in
+if (!isset($_SESSION['username'])) {
+    die("Unauthorized");
+}
 
+$username = $_SESSION['username'];
+$result = $mysqli->prepare("SELECT * FROM events WHERE username = ?");
+$result->bind_param("s", $username);
+$result->execute();
+$result = $result->get_result();
+
+$events = [];
 while($row = $result->fetch_assoc()) {
     $events[] = [
         'id' => $row['id'],
