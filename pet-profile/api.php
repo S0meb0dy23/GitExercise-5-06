@@ -1,22 +1,18 @@
 <?php
-session_start();
 header('Content-Type: application/json');
 require_once 'db.php';
 
-ini_set('memory_limit', '256M');
-set_time_limit(300);
-
-$method = $_SERVER['REQUEST_METHOD'];
-$maxFileSize = 10 * 1024 * 1024; 
-
-// Check if user is logged in
-if (!isset($_SESSION['username'])) {
+// Start session and verify user
+session_start();
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['username'])) {
     http_response_code(401);
     echo json_encode(['error' => 'Unauthorized']);
     exit;
 }
-
 $username = $_SESSION['username'];
+
+$method = $_SERVER['REQUEST_METHOD'];
+$maxFileSize = 10 * 1024 * 1024;
 
 switch ($method) {
     case 'GET':
@@ -25,8 +21,8 @@ switch ($method) {
         $pets = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         foreach ($pets as &$pet) {
-            $stmt = $pdo->prepare("SELECT avatar FROM pets WHERE id = ?");
-            $stmt->execute([$pet['id']]);
+            $stmt = $pdo->prepare("SELECT avatar FROM pets WHERE id = ? AND username = ?");
+            $stmt->execute([$pet['id'], $username]);
             $avatarData = $stmt->fetchColumn();
             $pet['avatar'] = $avatarData ? 'data:image/jpeg;base64,' . base64_encode($avatarData) : null;
         }
@@ -39,8 +35,8 @@ switch ($method) {
         $data = json_decode(file_get_contents("php://input"), true);
         
         if ($method === 'POST') {
-            $stmt = $pdo->prepare("INSERT INTO pets (name, breed, age, weight, username) VALUES (?, ?, ?, ?, ?)");
-            $stmt->execute([$data['name'], $data['breed'], $data['age'], $data['weight'], $username]);
+            $stmt = $pdo->prepare("INSERT INTO pets (username, name, breed, age, weight) VALUES (?, ?, ?, ?, ?)");
+            $stmt->execute([$username, $data['name'], $data['breed'], $data['age'], $data['weight']]);
             $data['id'] = $pdo->lastInsertId();
         } else {
             $id = $_GET['id'] ?? null;
@@ -50,17 +46,8 @@ switch ($method) {
                 exit;
             }
             
-            // Verify pet belongs to user before updating
-            $stmt = $pdo->prepare("SELECT id FROM pets WHERE id = ? AND username = ?");
-            $stmt->execute([$id, $username]);
-            if (!$stmt->fetch()) {
-                http_response_code(403);
-                echo json_encode(['error' => 'Forbidden']);
-                exit;
-            }
-            
-            $stmt = $pdo->prepare("UPDATE pets SET name=?, breed=?, age=?, weight=? WHERE id=?");
-            $stmt->execute([$data['name'], $data['breed'], $data['age'], $data['weight'], $id]);
+            $stmt = $pdo->prepare("UPDATE pets SET name=?, breed=?, age=?, weight=? WHERE id=? AND username=?");
+            $stmt->execute([$data['name'], $data['breed'], $data['age'], $data['weight'], $id, $username]);
             $data['id'] = $id;
         }
         
@@ -87,20 +74,13 @@ switch ($method) {
         try {
             $pdo->beginTransaction();
             
-            // Verify pet belongs to user before deleting
-            $stmt = $pdo->prepare("SELECT id FROM pets WHERE id = ? AND username = ?");
+            // Delete gallery images first (with username check)
+            $stmt = $pdo->prepare("DELETE FROM gallery WHERE pet_id = ? AND username = ?");
             $stmt->execute([$id, $username]);
-            if (!$stmt->fetch()) {
-                http_response_code(403);
-                echo json_encode(['error' => 'Forbidden']);
-                exit;
-            }
-            
-            $stmt = $pdo->prepare("DELETE FROM gallery WHERE pet_id = ?");
-            $stmt->execute([$id]);
            
-            $stmt = $pdo->prepare("DELETE FROM pets WHERE id = ?");
-            $stmt->execute([$id]);
+            // Delete pet (with username check)
+            $stmt = $pdo->prepare("DELETE FROM pets WHERE id = ? AND username = ?");
+            $stmt->execute([$id, $username]);
             
             $pdo->commit();
             echo json_encode(['success' => true]);

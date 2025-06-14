@@ -1,43 +1,39 @@
 <?php
-session_start();
 header('Content-Type: application/json');
 require_once 'db.php';
 
-ini_set('memory_limit', '256M');
-set_time_limit(300);
-
-$method = $_SERVER['REQUEST_METHOD'];
-$petId = $_GET['pet_id'] ?? null;
-$maxFileSize = 10 * 1024 * 1024; 
-
-// Check if user is logged in
-if (!isset($_SESSION['username'])) {
+// Start session and verify user
+session_start();
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['username'])) {
     http_response_code(401);
     echo json_encode(['error' => 'Unauthorized']);
     exit;
 }
-
 $username = $_SESSION['username'];
+
+$method = $_SERVER['REQUEST_METHOD'];
+$petId = $_GET['pet_id'] ?? null;
+$maxFileSize = 10 * 1024 * 1024;
 
 switch ($method) {
     case 'GET':
         if ($petId) {
-            // Verify pet belongs to user
+            // Verify pet belongs to user first
             $stmt = $pdo->prepare("SELECT id FROM pets WHERE id = ? AND username = ?");
             $stmt->execute([$petId, $username]);
             if (!$stmt->fetch()) {
                 http_response_code(403);
-                echo json_encode(['error' => 'Forbidden']);
+                echo json_encode(['error' => 'Forbidden - pet not owned by user']);
                 exit;
             }
-            
-            $stmt = $pdo->prepare("SELECT id, pet_id FROM gallery WHERE pet_id = ?");
-            $stmt->execute([$petId]);
+
+            $stmt = $pdo->prepare("SELECT id, pet_id FROM gallery WHERE pet_id = ? AND username = ?");
+            $stmt->execute([$petId, $username]);
             $images = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
             foreach ($images as &$image) {
-                $stmt = $pdo->prepare("SELECT image FROM gallery WHERE id = ?");
-                $stmt->execute([$image['id']]);
+                $stmt = $pdo->prepare("SELECT image FROM gallery WHERE id = ? AND username = ?");
+                $stmt->execute([$image['id'], $username]);
                 $imageData = $stmt->fetchColumn();
                 $image['image'] = 'data:image/jpeg;base64,' . base64_encode($imageData);
             }
@@ -57,7 +53,7 @@ switch ($method) {
         $stmt->execute([$data['pet_id'], $username]);
         if (!$stmt->fetch()) {
             http_response_code(403);
-            echo json_encode(['error' => 'Forbidden']);
+            echo json_encode(['error' => 'Forbidden - pet not owned by user']);
             exit;
         }
 
@@ -72,8 +68,8 @@ switch ($method) {
         
         $imageData = base64_decode($base64);
         
-        $stmt = $pdo->prepare("INSERT INTO gallery (pet_id, image) VALUES (?, ?)");
-        $stmt->execute([$data['pet_id'], $imageData]);
+        $stmt = $pdo->prepare("INSERT INTO gallery (username, pet_id, image) VALUES (?, ?, ?)");
+        $stmt->execute([$username, $data['pet_id'], $imageData]);
         
         $id = $pdo->lastInsertId();
         echo json_encode(['id' => $id, 'pet_id' => $data['pet_id']]);
@@ -82,17 +78,14 @@ switch ($method) {
     case 'DELETE':
         $id = $_GET['id'] ?? null;
         if ($id) {
-            // Verify the image belongs to a pet owned by the user
-            $stmt = $pdo->prepare("SELECT g.id FROM gallery g JOIN pets p ON g.pet_id = p.id WHERE g.id = ? AND p.username = ?");
+            // Verify image belongs to user
+            $stmt = $pdo->prepare("DELETE FROM gallery WHERE id = ? AND username = ?");
             $stmt->execute([$id, $username]);
-            if (!$stmt->fetch()) {
+            if ($stmt->rowCount() === 0) {
                 http_response_code(403);
-                echo json_encode(['error' => 'Forbidden']);
+                echo json_encode(['error' => 'Forbidden - image not owned by user']);
                 exit;
             }
-            
-            $stmt = $pdo->prepare("DELETE FROM gallery WHERE id = ?");
-            $stmt->execute([$id]);
             echo json_encode(['success' => true]);
         } else {
             http_response_code(400);
