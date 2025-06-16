@@ -1,9 +1,25 @@
 <?php
-$conn = new mysqli("localhost", "root", "", "server_db");
-$pets = [];
-$res = $conn->query("SELECT id, name FROM pets ORDER BY name");
-while ($row = $res->fetch_assoc()) {
-    $pets[] = $row;
+session_start();
+header('Content-Type: application/json');
+error_reporting(0); // optional: hides warnings in dev
+
+if (!isset($_SESSION['username'])) {
+    http_response_code(401);
+    echo json_encode(['error' => 'Unauthorized']);
+    exit;
 }
-echo json_encode($pets);
-?>
+
+require_once 'db.php'; // defines $pdo
+
+$username = $_SESSION['username'];
+
+try {
+    $stmt = $pdo->prepare("SELECT id, name FROM pets WHERE username = ? ORDER BY name");
+    $stmt->execute([$username]);
+    $pets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    echo json_encode($pets); // ✅ valid JSON array
+} catch (PDOException $e) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Database error']);
+}
