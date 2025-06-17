@@ -1,11 +1,18 @@
 <?php
-session_start();
-require 'db.php';
+$pdo = new PDO("mysql:host=localhost;dbname=server_db", "root", "");
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-$post_id = $_POST['post_id'];
-$conn->query("DELETE FROM comments WHERE post_id = $post_id");
-$conn->query("DELETE FROM likes WHERE post_id = $post_id");
-$conn->query("DELETE FROM images WHERE post_id = $post_id");
-$conn->query("DELETE FROM posts WHERE id = $post_id");
+$postId = $_POST['post_id'] ?? '';
+if (!$postId) {
+    echo json_encode(['success' => false, 'error' => 'Post ID required']);
+    exit;
+}
 
-echo json_encode(["success" => true]);
+// Delete related comments first
+$pdo->prepare("DELETE FROM comments WHERE post_id = ?")->execute([$postId]);
+
+// Delete the post
+$pdo->prepare("DELETE FROM posts WHERE id = ?")->execute([$postId]);
+
+echo json_encode(['success' => true]);
+?>

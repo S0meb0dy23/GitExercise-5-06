@@ -1,18 +1,30 @@
 <?php
-session_start();
-require 'db.php';
+$pdo = new PDO("mysql:host=localhost;dbname=server_db", "root", "");
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-$user_id = $_SESSION['user_id'];
-$post_id = $_POST['post_id'];
-
-$check = $conn->query("SELECT * FROM likes WHERE post_id = $post_id AND user_id = $user_id");
-if ($check->num_rows > 0) {
-  $conn->query("DELETE FROM likes WHERE post_id = $post_id AND user_id = $user_id");
-  $liked = false;
-} else {
-  $conn->query("INSERT INTO likes (post_id, user_id) VALUES ($post_id, $user_id)");
-  $liked = true;
+$postId = $_POST['post_id'] ?? '';
+if (!$postId) {
+    echo json_encode(['success' => false, 'error' => 'Post ID required']);
+    exit;
 }
 
-$likes = $conn->query("SELECT COUNT(*) AS count FROM likes WHERE post_id = $post_id")->fetch_assoc()['count'];
-echo json_encode(["liked" => $liked, "likes" => $likes]);
+// Fetch current likes
+$stmt = $pdo->prepare("SELECT likes FROM posts WHERE id = ?");
+$stmt->execute([$postId]);
+$row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$row) {
+    echo json_encode(['success' => false, 'error' => 'Post not found']);
+    exit;
+}
+
+$currentLikes = (int)$row['likes'];
+$toggle = $_POST['liked'] === 'true' ? -1 : 1;
+
+$newLikes = max(0, $currentLikes + $toggle);
+
+$stmt = $pdo->prepare("UPDATE posts SET likes = ? WHERE id = ?");
+$stmt->execute([$newLikes, $postId]);
+
+echo json_encode(['success' => true, 'likes' => $newLikes]);
+?>

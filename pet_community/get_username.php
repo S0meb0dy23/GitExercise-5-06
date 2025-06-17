@@ -1,17 +1,10 @@
 <?php
-session_start();
-require 'db.php';
+$pdo = new PDO("mysql:host=localhost;dbname=server_db", "root", "");
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-if (!isset($_SESSION['user_id'])) {
-  $username = "Guest" . rand(1000, 9999);
-  $stmt = $conn->prepare("INSERT INTO user_profile (username) VALUES (?)");
-  $stmt->bind_param("s", $username);
-  $stmt->execute();
-  $_SESSION['user_id'] = $stmt->insert_id;
-}
+// Get the first username from user_profile table
+$stmt = $pdo->query("SELECT username FROM user_profile LIMIT 1");
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$user_id = $_SESSION['user_id'];
-$result = $conn->query("SELECT username FROM user_profile WHERE id = $user_id");
-$user = $result->fetch_assoc();
-
-echo json_encode(["username" => $user['username']]);
+echo json_encode(['username' => $user ? $user['username'] : 'User']);
+?>

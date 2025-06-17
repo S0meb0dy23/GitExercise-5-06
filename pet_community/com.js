@@ -1,263 +1,224 @@
+--- JavaScript: com.js ---
 document.addEventListener('DOMContentLoaded', () => {
-  const postList = document.getElementById('postList');
-  const newPostBtn = document.getElementById('newPostBtn');
-  const newPostModal = document.getElementById('newPostModal');
-  const closeModalBtn = newPostModal.querySelector('.close');
-  const newPostForm = document.getElementById('newPostForm');
-  const postCaptionInput = document.getElementById('postCaption');
-  const postImagesInput = document.getElementById('postImages');
-  const imagePreviewContainer = document.getElementById('image-preview-container');
-  const currentUserEl = document.getElementById('currentUser');
-  const changeUsernameBtn = document.getElementById('changeUsernameBtn');
+    const postList = document.getElementById('postList');
+    const newPostBtn = document.getElementById('newPostBtn');
+    const newPostModal = document.getElementById('newPostModal');
+    const closeModalBtn = newPostModal.querySelector('.close');
+    const newPostForm = document.getElementById('newPostForm');
+    const postCaptionInput = document.getElementById('postCaption');
+    const postImagesInput = document.getElementById('postImages');
+    const imagePreviewContainer = document.getElementById('image-preview-container');
+    const currentUserEl = document.getElementById('currentUser');
+    const changeUsernameBtn = document.getElementById('changeUsernameBtn');
 
-  function escapeHtml(text) {
-    if (typeof text !== "string") return "";
-    return text.replace(/[&<>"']/g, (m) =>
-      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m] || m)
-    );
-  }
+    let currentUsername = 'User';
 
-  function createImageSlider(images) {
-    return `<div class="image-slider">${images.map(src => `<img src="${src}" alt="Post image" loading="lazy" />`).join('')}</div>`;
-  }
+    async function fetchWithErrorHandling(url, options = {}) {
+        try {
+            if (!options.headers) options.headers = {};
+            options.headers['Accept'] = 'application/json';
 
-  function createPostElement(post) {
-    const postEl = document.createElement('div');
-    postEl.classList.add('post');
-    postEl.dataset.id = post.id;
-    postEl.innerHTML = `
-      <div class="post-header">
-        <div>
-          <span class="post-author">${escapeHtml(post.author)}</span> 
-          <span class="post-date">${new Date(post.date).toLocaleString()}</span>
-        </div>
-        <div class="menu-container">
-          <i class="fas fa-ellipsis-v menu-icon"></i>
-          <div class="menu-dropdown">
-            <button class="edit-btn">Edit</button>
-            <button class="delete-btn">Delete</button>
-          </div>
-        </div>
-      </div>
-      <div class="post-content">${escapeHtml(post.caption)}</div>
-      ${post.images.length ? createImageSlider(post.images) : ''}
-      <div class="post-actions">
-        <button class="action-btn like-btn ${post.liked ? 'liked' : ''}" data-id="${post.id}">
-          <i class="fas fa-heart"></i> <span class="like-count">${post.likes}</span>
-        </button>
-        <button class="action-btn comment-toggle-btn">
-          <i class="fas fa-comment"></i> <span class="comment-count">${post.comments.length}</span>
-        </button>
-      </div>
-      <div class="comments-section hidden">
-        <div class="comments-list">
-          ${post.comments.map(c => `<div class="comment"><b>${escapeHtml(c.author)}:</b> ${escapeHtml(c.text)}</div>`).join('')}
-        </div>
-        <form class="comment-input">
-          <input type="text" placeholder="Add a comment..." required />
-          <button type="submit">Send</button>
-        </form>
-      </div>`;
-    return postEl;
-  }
+            const response = await fetch(url, options);
+            if (response.status === 204) return null;
 
-  function renderPosts(posts) {
-    postList.innerHTML = '';
-    posts.forEach(post => postList.appendChild(createPostElement(post)));
-  }
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                const text = await response.text();
+                throw new Error(`Invalid content-type. Received: ${contentType || 'none'}`);
+            }
 
-  function loadPosts() {
-    fetch('get_posts.php')
-      .then(res => res.json())
-      .then(renderPosts)
-      .catch(err => console.error('Error loading posts:', err));
-  }
-
-  function openModal() {
-    newPostModal.classList.remove('hidden');
-    postCaptionInput.focus();
-  }
-
-  function closeModal() {
-    newPostModal.classList.add('hidden');
-    newPostForm.reset();
-    imagePreviewContainer.innerHTML = '';
-  }
-
-  function previewSelectedImages(files) {
-    imagePreviewContainer.innerHTML = '';
-    Array.from(files).forEach(file => {
-      if (!file.type.startsWith('image/')) return;
-      const reader = new FileReader();
-      reader.onload = e => {
-        const img = document.createElement('img');
-        img.src = e.target.result;
-        img.className = 'preview-image';
-        imagePreviewContainer.appendChild(img);
-      };
-      reader.readAsDataURL(file);
-    });
-  }
-
-  newPostForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const formData = new FormData();
-    formData.append('caption', postCaptionInput.value.trim());
-
-    Array.from(postImagesInput.files).forEach((file) => {
-      if (file.size > 10 * 1024 * 1024) {
-        alert(`${file.name} exceeds 10MB limit.`);
-        return;
-      }
-      formData.append('images[]', file);
-    });
-
-    fetch('upload_post.php', {
-      method: 'POST',
-      body: formData
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          loadPosts();
-          closeModal();
-        } else {
-          alert('Post upload failed.');
+            const data = await response.json();
+            if (response.status >= 400) {
+                throw new Error(data.error || `Request failed with status ${response.status}`);
+            }
+            return data;
+        } catch (error) {
+            console.error(`Fetch error for ${url}:`, error);
+            throw error;
         }
-      })
-      .catch(err => console.error('Upload error:', err));
-  });
-
-  postList.addEventListener('click', (e) => {
-    const postEl = e.target.closest('.post');
-    if (!postEl) return;
-
-    if (e.target.closest('.comment-toggle-btn')) {
-      postEl.querySelector('.comments-section').classList.toggle('hidden');
     }
 
-    if (e.target.closest('.like-btn')) {
-      const btn = e.target.closest('.like-btn');
-      const postId = btn.dataset.id;
-      const formData = new FormData();
-      formData.append('post_id', postId);
-
-      fetch('like_post.php', {
-        method: 'POST',
-        body: formData
-      })
-        .then(res => res.json())
-        .then(data => {
-          btn.classList.toggle('liked', data.liked);
-          btn.querySelector('.like-count').textContent = data.likes;
-        });
+    function showError(msg) {
+        alert(msg);
     }
 
-    if (e.target.classList.contains('menu-icon')) {
-      const dropdown = e.target.nextElementSibling;
-      dropdown.classList.toggle('show');
-      return;
+    async function loadUsername() {
+        const res = await fetchWithErrorHandling('get_username.php');
+        currentUsername = res.username;
+        currentUserEl.textContent = currentUsername;
     }
 
-    if (e.target.classList.contains('delete-btn')) {
-      const postId = postEl.dataset.id;
-      if (!confirm('Are you sure you want to delete this post?')) return;
-
-      const formData = new FormData();
-      formData.append('post_id', postId);
-
-      fetch('delete_post.php', {
-        method: 'POST',
-        body: formData
-      })
-        .then(res => res.json())
-        .then(data => {
-          if (data.success) loadPosts();
-          else alert('Delete failed.');
-        });
-    }
-
-    if (e.target.classList.contains('edit-btn')) {
-      const postId = postEl.dataset.id;
-      const oldCaption = postEl.querySelector('.post-content').textContent;
-      const newCaption = prompt("Edit your post caption:", oldCaption);
-      if (newCaption === null) return;
-
-      const formData = new FormData();
-      formData.append('post_id', postId);
-      formData.append('caption', newCaption);
-
-      fetch('edit_post.php', {
-        method: 'POST',
-        body: formData
-      })
-        .then(res => res.json())
-        .then(data => {
-          if (data.success) loadPosts();
-          else alert('Edit failed.');
-        });
-    }
-  });
-
-  postList.addEventListener('submit', (e) => {
-    if (!e.target.classList.contains('comment-input')) return;
-    e.preventDefault();
-
-    const input = e.target.querySelector('input');
-    const text = input.value.trim();
-    const postId = e.target.closest('.post').dataset.id;
-    if (!text) return;
-
-    const formData = new FormData();
-    formData.append('post_id', postId);
-    formData.append('text', text);
-
-    fetch('add_comment.php', {
-      method: 'POST',
-      body: formData
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) loadPosts();
-      });
-
-    input.value = '';
-  });
-
-  postImagesInput.addEventListener('change', () => {
-    previewSelectedImages(postImagesInput.files);
-  });
-
-  newPostBtn.addEventListener('click', openModal);
-  closeModalBtn.addEventListener('click', closeModal);
-  window.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeModal();
-  });
-
-  changeUsernameBtn.addEventListener('click', () => {
-    const name = prompt("Enter your new username:");
-    if (!name) return;
-    fetch('update_username.php', {
-      method: 'POST',
-      body: new URLSearchParams({ username: name })
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.username) {
-          currentUserEl.textContent = data.username;
-          loadPosts();
+    changeUsernameBtn.addEventListener('click', async () => {
+        const newName = prompt('Enter new username:', currentUsername);
+        if (newName && newName !== currentUsername) {
+            const res = await fetchWithErrorHandling('update_username.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `username=${encodeURIComponent(newName)}`
+            });
+            currentUsername = res.username;
+            currentUserEl.textContent = currentUsername;
         }
-      });
-  });
-
-  // ✅ Fetch username without modifying it
-  fetch('get_username.php')
-    .then(res => res.json())
-    .then(data => {
-      if (data.username) {
-        currentUserEl.textContent = data.username;
-      }
     });
 
-  loadPosts();
+    newPostBtn.addEventListener('click', () => {
+        newPostModal.style.display = 'block';
+    });
+
+    closeModalBtn.addEventListener('click', () => {
+        newPostModal.style.display = 'none';
+        newPostForm.reset();
+        imagePreviewContainer.innerHTML = '';
+    });
+
+    postImagesInput.addEventListener('change', () => {
+        imagePreviewContainer.innerHTML = '';
+        Array.from(postImagesInput.files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                const img = document.createElement('img');
+                img.src = reader.result;
+                img.className = 'preview-img';
+                imagePreviewContainer.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+
+    newPostForm.addEventListener('submit', async e => {
+        e.preventDefault();
+        const formData = new FormData(newPostForm);
+        const res = await fetchWithErrorHandling('upload_post.php', {
+            method: 'POST',
+            body: formData
+        });
+        newPostModal.style.display = 'none';
+        newPostForm.reset();
+        imagePreviewContainer.innerHTML = '';
+        await loadPosts();
+    });
+
+    async function loadPosts() {
+        const res = await fetchWithErrorHandling('get_posts.php');
+        postList.innerHTML = '';
+
+        res.posts.forEach(post => {
+            const div = document.createElement('div');
+            div.className = 'post';
+            div.dataset.id = post.id;
+
+            let imagesHTML = '';
+            post.images.forEach(src => {
+                imagesHTML += `<img src="${src}" class="post-image">`;
+            });
+
+            let commentsHTML = '';
+            post.comments.forEach(comment => {
+                commentsHTML += `<div class="comment"><strong>${comment.author}</strong>: ${comment.text}</div>`;
+            });
+
+            div.innerHTML = `
+                <div class="post-header">
+                    <strong>${post.author}</strong> · ${new Date(post.date).toLocaleString()}
+                    <div class="post-actions">
+                        <button class="edit-post">✏️</button>
+                        <button class="delete-post">🗑️</button>
+                    </div>
+                </div>
+                <p class="post-caption">${post.caption}</p>
+                <div class="post-images">${imagesHTML}</div>
+                <div class="post-footer">
+                    <button class="like-post ${post.liked ? 'liked' : ''}">❤️ ${post.likes}</button>
+                </div>
+                <div class="post-comments">
+                    ${commentsHTML}
+                    <input class="comment-input" type="text" placeholder="Write a comment...">
+                </div>
+            `;
+
+            postList.appendChild(div);
+        });
+    }
+
+    postList.addEventListener('click', async e => {
+        const postEl = e.target.closest('.post');
+        if (!postEl) return;
+        const postId = postEl.dataset.id;
+
+        if (e.target.classList.contains('like-post')) {
+            const liked = e.target.classList.contains('liked');
+            const res = await fetchWithErrorHandling('like_post.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `post_id=${postId}&liked=${liked}`
+            });
+            e.target.classList.toggle('liked');
+            e.target.textContent = `❤️ ${res.likes}`;
+        } else if (e.target.classList.contains('edit-post')) {
+            const captionEl = postEl.querySelector('.post-caption');
+            const newCaption = prompt('Edit caption:', captionEl.textContent);
+            if (newCaption) {
+                await fetchWithErrorHandling('edit_post.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `post_id=${postId}&caption=${encodeURIComponent(newCaption)}`
+                });
+                await loadPosts();
+            }
+        } else if (e.target.classList.contains('delete-post')) {
+            if (confirm('Delete this post?')) {
+                await fetchWithErrorHandling('delete_post.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `post_id=${postId}`
+                });
+                await loadPosts();
+            }
+        }
+    });
+
+    postList.addEventListener('keypress', async e => {
+        if (e.target.classList.contains('comment-input') && e.key === 'Enter') {
+            const text = e.target.value.trim();
+            if (text) {
+                const postEl = e.target.closest('.post');
+                const postId = postEl.dataset.id;
+                await fetchWithErrorHandling('add_comment.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `post_id=${postId}&text=${encodeURIComponent(text)}`
+                });
+                await loadPosts();
+            }
+        }
+    });
+
+    loadUsername();
+    loadPosts();
 });
+
+--- SQL Structure ---
+
+CREATE TABLE user_profile (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL
+);
+
+INSERT INTO user_profile (username) VALUES ('User');
+
+CREATE TABLE posts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    author VARCHAR(255) NOT NULL,
+    caption TEXT NOT NULL,
+    images TEXT,
+    date DATETIME NOT NULL,
+    likes INT DEFAULT 0
+);
+
+CREATE TABLE comments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    post_id INT NOT NULL,
+    author VARCHAR(255) NOT NULL,
+    text TEXT NOT NULL,
+    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
+);

@@ -1,13 +1,22 @@
 <?php
-session_start();
-require 'db.php';
+$pdo = new PDO("mysql:host=localhost;dbname=server_db", "root", "");
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-$user_id = $_SESSION['user_id'];
-$post_id = $_POST['post_id'];
-$text = $_POST['text'];
+$postId = $_POST['post_id'] ?? '';
+$text = $_POST['text'] ?? '';
 
-$stmt = $conn->prepare("INSERT INTO comments (post_id, user_id, text) VALUES (?, ?, ?)");
-$stmt->bind_param("iis", $post_id, $user_id, $text);
-$stmt->execute();
+if (!$postId || !$text) {
+    echo json_encode(['success' => false, 'error' => 'Missing post ID or comment text']);
+    exit;
+}
 
-echo json_encode(["success" => true]);
+// Get current username
+$stmt = $pdo->query("SELECT username FROM user_profile LIMIT 1");
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
+$username = $user ? $user['username'] : 'User';
+
+$stmt = $pdo->prepare("INSERT INTO comments (post_id, author, text) VALUES (?, ?, ?)");
+$stmt->execute([$postId, $username, $text]);
+
+echo json_encode(['success' => true]);
+?>

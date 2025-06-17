@@ -1,29 +1,40 @@
 <?php
 session_start();
-require 'db.php';
+$conn = new mysqli("localhost", "root", "", "server_db");
+if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
+
+$session_id = session_id();
+$user_id = null;
+
+$stmt = $conn->prepare("SELECT id FROM users WHERE session_id = ?");
+$stmt->bind_param("s", $session_id);
+$stmt->execute();
+$stmt->bind_result($user_id);
+$stmt->fetch();
+$stmt->close();
 
 $caption = $_POST['caption'];
-$author_id = $_SESSION['user_id'] ?? 0;
 
-$stmt = $conn->prepare("INSERT INTO posts (author_id, caption) VALUES (?, ?)");
-$stmt->bind_param("is", $author_id, $caption);
+$stmt = $conn->prepare("INSERT INTO posts (user_id, caption) VALUES (?, ?)");
+$stmt->bind_param("is", $user_id, $caption);
 $stmt->execute();
 $post_id = $stmt->insert_id;
+$stmt->close();
 
-$uploaded = true;
-$target_dir = "uploads/";
-if (!is_dir($target_dir)) mkdir($target_dir, 0777, true);
+foreach ($_FILES['images']['tmp_name'] as $index => $tmpName) {
+    if ($_FILES['images']['error'][$index] === 0) {
+        $size = $_FILES['images']['size'][$index];
+        $mime = $_FILES['images']['type'][$index];
 
-foreach ($_FILES['images']['tmp_name'] as $key => $tmp_name) {
-  $filename = basename($_FILES['images']['name'][$key]);
-  $target_file = $target_dir . time() . "_" . $filename;
-  if (move_uploaded_file($tmp_name, $target_file)) {
-    $stmt = $conn->prepare("INSERT INTO images (post_id, image_path) VALUES (?, ?)");
-    $stmt->bind_param("is", $post_id, $target_file);
-    $stmt->execute();
-  } else {
-    $uploaded = false;
-  }
+        if ($size <= 10 * 1024 * 1024) {
+            $data = file_get_contents($tmpName);
+            $imgStmt = $conn->prepare("INSERT INTO images (post_id, image_data, mime_type) VALUES (?, ?, ?)");
+            $imgStmt->bind_param("iss", $post_id, $data, $mime);
+            $imgStmt->execute();
+            $imgStmt->close();
+        }
+    }
 }
 
-echo json_encode(["success" => $uploaded]);
+echo json_encode(["success" => true]);
+?>

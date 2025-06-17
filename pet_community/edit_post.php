@@ -1,12 +1,17 @@
 <?php
-session_start();
-require 'db.php';
+$pdo = new PDO("mysql:host=localhost;dbname=server_db", "root", "");
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-$post_id = $_POST['post_id'];
-$caption = $_POST['caption'];
+$postId = $_POST['post_id'] ?? '';
+$caption = $_POST['caption'] ?? '';
 
-$stmt = $conn->prepare("UPDATE posts SET caption = ? WHERE id = ?");
-$stmt->bind_param("si", $caption, $post_id);
-$stmt->execute();
+if (!$postId || !$caption) {
+    echo json_encode(['success' => false, 'error' => 'Missing post ID or caption']);
+    exit;
+}
 
-echo json_encode(["success" => true]);
+$stmt = $pdo->prepare("UPDATE posts SET caption = ? WHERE id = ?");
+$stmt->execute([$caption, $postId]);
+
+echo json_encode(['success' => true]);
+?>
